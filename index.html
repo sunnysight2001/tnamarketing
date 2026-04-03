@@ -1,0 +1,1530 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cipla Marketing Academy · TNA 2025</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+:root {
+  --navy:#0D2B5E; --teal:#006D77; --gold:#C4922A; --coral:#D85A30;
+  --sage:#3B6D11; --lavender:#534AB7; --amber:#BA7517;
+  --bg:#F4F2EE; --card:#FFFFFF; --section:#F9F8F6;
+  --text:#1A1A1A; --muted:#888780; --border:#E0DDD6; --border2:#C8C5BC;
+  --r:10px; --rl:16px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);font-size:15px;line-height:1.6;min-height:100vh}
+
+/* ── LOGIN SCREEN ── */
+#login-screen{
+  min-height:100vh;display:flex;align-items:center;justify-content:center;
+  background:var(--navy);
+}
+.login-card{
+  background:white;border-radius:20px;padding:48px 40px;width:100%;max-width:400px;text-align:center;
+}
+.login-logo{width:56px;height:56px;background:var(--gold);border-radius:12px;display:flex;align-items:center;justify-content:center;margin:0 auto 20px;font-size:22px;color:var(--navy);font-weight:600}
+.login-card h1{font-family:'DM Serif Display',serif;font-size:24px;color:var(--navy);margin-bottom:6px}
+.login-card p{font-size:14px;color:var(--muted);margin-bottom:28px}
+.ecode-input{
+  width:100%;padding:14px 18px;border:2px solid var(--border2);border-radius:10px;
+  font-family:'DM Sans',sans-serif;font-size:20px;text-align:center;letter-spacing:4px;
+  color:var(--navy);font-weight:500;outline:none;transition:border 0.2s;
+}
+.ecode-input:focus{border-color:var(--navy)}
+.login-btn{
+  width:100%;margin-top:16px;padding:14px;background:var(--navy);color:white;
+  border:none;border-radius:10px;font-family:'DM Sans',sans-serif;font-size:15px;
+  font-weight:500;cursor:pointer;transition:background 0.2s;
+}
+.login-btn:hover{background:#1a3f7a}
+.login-error{color:#A32D2D;font-size:13px;margin-top:10px;min-height:20px}
+.login-hint{font-size:12px;color:var(--muted);margin-top:16px}
+
+/* ── APP SHELL ── */
+#app{display:none}
+.topbar{
+  background:var(--navy);padding:0;display:flex;align-items:stretch;
+  position:sticky;top:0;z-index:100;
+}
+.topbar-brand{padding:12px 24px;display:flex;align-items:center;gap:10px;border-right:1px solid rgba(255,255,255,0.1)}
+.brand-logo{width:30px;height:30px;background:var(--gold);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;color:var(--navy)}
+.brand-text{color:white;font-size:13px;font-weight:500}
+.brand-sub{color:rgba(255,255,255,0.45);font-size:11px}
+.topbar-tabs{display:flex;align-items:stretch;flex:1;overflow-x:auto}
+.t-tab{
+  padding:0 18px;display:flex;align-items:center;gap:6px;
+  color:rgba(255,255,255,0.55);font-size:13px;cursor:pointer;
+  border:none;background:none;white-space:nowrap;
+  border-bottom:2px solid transparent;transition:all 0.2s;
+}
+.t-tab:hover{color:white;background:rgba(255,255,255,0.05)}
+.t-tab.active{color:var(--gold);border-bottom-color:var(--gold)}
+.t-tab .badge{
+  background:rgba(196,146,42,0.25);color:var(--gold);
+  font-size:10px;padding:1px 6px;border-radius:8px;
+}
+.topbar-user{
+  margin-left:auto;padding:0 20px;display:flex;align-items:center;gap:10px;
+  border-left:1px solid rgba(255,255,255,0.1);
+}
+.user-avatar{
+  width:30px;height:30px;border-radius:50%;background:rgba(196,146,42,0.3);
+  display:flex;align-items:center;justify-content:center;
+  color:var(--gold);font-size:11px;font-weight:500;
+}
+.user-info{color:white}
+.user-name{font-size:13px;font-weight:500}
+.user-role{font-size:11px;color:rgba(255,255,255,0.45)}
+.logout-btn{padding:5px 10px;border:1px solid rgba(255,255,255,0.2);border-radius:6px;background:none;color:rgba(255,255,255,0.5);font-size:11px;cursor:pointer}
+.logout-btn:hover{color:white;border-color:rgba(255,255,255,0.4)}
+
+/* ── PAGES ── */
+.page{display:none;min-height:calc(100vh - 52px)}
+.page.active{display:block}
+.container{max-width:800px;margin:0 auto;padding:32px 24px}
+
+/* ── HERO BANNER ── */
+.hero-banner{
+  background:linear-gradient(135deg,var(--navy) 0%,#1a3f7a 60%,var(--teal) 100%);
+  padding:36px 32px 32px;position:relative;overflow:hidden;
+}
+.hero-banner::after{
+  content:'';position:absolute;top:-50px;right:-50px;
+  width:200px;height:200px;border:32px solid rgba(196,146,42,0.12);border-radius:50%;
+}
+.hero-tag{display:inline-flex;align-items:center;gap:6px;background:rgba(196,146,42,0.18);border:1px solid rgba(196,146,42,0.3);color:#F0BE6A;font-size:11px;font-weight:500;padding:4px 12px;border-radius:16px;margin-bottom:14px;letter-spacing:0.5px}
+.hero-banner h2{font-family:'DM Serif Display',serif;color:white;font-size:26px;margin-bottom:6px}
+.hero-banner p{color:rgba(255,255,255,0.6);font-size:14px;max-width:520px}
+.hero-meta{display:flex;gap:24px;margin-top:20px;flex-wrap:wrap}
+.hero-stat .n{color:var(--gold);font-size:22px;font-weight:600;font-family:'DM Serif Display',serif}
+.hero-stat .l{color:rgba(255,255,255,0.45);font-size:11px}
+
+/* ── CARDS & SECTIONS ── */
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--rl);padding:22px}
+.card-sm{padding:16px}
+.info-bar{background:var(--section);border:1px solid var(--border);border-radius:var(--r);padding:14px 18px;margin-bottom:24px;font-size:13px;color:var(--muted)}
+.info-bar strong{color:var(--text)}
+.section-label{font-size:11px;font-weight:500;color:var(--teal);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px}
+.section-title{font-family:'DM Serif Display',serif;font-size:22px;color:var(--navy)}
+
+/* ── COMPETENCY BLOCKS ── */
+.comp-header{
+  display:flex;align-items:center;gap:10px;padding:12px 18px;
+  background:var(--navy);border-radius:var(--r) var(--r) 0 0;
+}
+.comp-dot{width:8px;height:8px;border-radius:50%;background:var(--gold)}
+.comp-name{color:white;font-weight:500;font-size:14px}
+.comp-tag{color:rgba(255,255,255,0.4);font-size:11px;margin-left:auto}
+
+.q-item{background:white;border:1px solid var(--border);border-top:none;padding:18px 22px}
+.q-item:last-child{border-radius:0 0 var(--r) var(--r)}
+.q-meta{font-size:11px;color:var(--muted);margin-bottom:4px;letter-spacing:0.3px}
+.q-subdim{font-size:11px;font-weight:500;color:var(--teal);margin-bottom:8px}
+.q-text{font-size:14px;color:var(--text);margin-bottom:12px;line-height:1.5}
+
+/* ── PROFICIENCY SELECTOR ── */
+.prof-bar{display:flex;border-radius:8px;overflow:hidden;border:1px solid var(--border)}
+.prof-opt{
+  flex:1;padding:10px 4px;text-align:center;cursor:pointer;
+  border-right:1px solid var(--border);transition:all 0.15s;
+  display:flex;flex-direction:column;align-items:center;gap:3px;
+}
+.prof-opt:last-child{border-right:none}
+.prof-opt .pl{font-size:13px;font-weight:500}
+.prof-opt .ps{font-size:10px;color:var(--muted)}
+.prof-L{background:#F9F8F6}.prof-L:hover,.prof-L.sel{background:#F1EFE8;color:#2C2C2A}
+.prof-Ap:hover,.prof-Ap.sel{background:#EAF3DE;color:#173404}
+.prof-Ad:hover,.prof-Ad.sel{background:#E6F1FB;color:#042C53}
+.prof-Ex:hover,.prof-Ex.sel{background:#FBEAF0;color:#4B1528}
+.prof-opt.sel .ps{color:inherit;opacity:0.7}
+
+.anchor-box{
+  margin-top:10px;padding:10px 14px;background:#F9F8F6;border-radius:8px;
+  font-size:12px;color:var(--muted);line-height:1.6;border-left:3px solid var(--border2);
+}
+.anchor-box .al{font-weight:500;color:var(--text)}
+
+/* ── CONTEXT QUESTIONS ── */
+.ctx-block{background:white;border:1px solid var(--border);border-radius:var(--r);padding:20px;margin-bottom:16px}
+.ctx-q{font-size:14px;font-weight:500;color:var(--text);margin-bottom:12px}
+.ctx-desc{font-size:12px;color:var(--muted);margin-bottom:12px}
+.mcq-opts{display:flex;flex-direction:column;gap:8px}
+.mcq-opt{
+  display:flex;align-items:center;gap:10px;padding:10px 14px;
+  border:1px solid var(--border);border-radius:8px;cursor:pointer;
+  font-size:13px;color:var(--text);transition:all 0.15s;
+}
+.mcq-opt:hover{border-color:var(--teal);background:#E1F5EE}
+.mcq-opt.sel{border-color:var(--navy);background:#E6F1FB;color:var(--navy)}
+.mcq-circle{width:16px;height:16px;border-radius:50%;border:2px solid var(--border2);flex-shrink:0}
+.mcq-opt.sel .mcq-circle{background:var(--navy);border-color:var(--navy)}
+.ctx-textarea{
+  width:100%;padding:12px 14px;border:1px solid var(--border);border-radius:8px;
+  font-family:'DM Sans',sans-serif;font-size:13px;resize:vertical;min-height:80px;
+  color:var(--text);background:white;margin-top:4px;
+}
+.ctx-textarea:focus{outline:none;border-color:var(--teal)}
+
+/* ── MANAGER TAB ── */
+.reportee-card{
+  background:white;border:1px solid var(--border);border-radius:var(--r);
+  margin-bottom:16px;overflow:hidden;
+}
+.reportee-header{
+  padding:14px 18px;display:flex;align-items:center;gap:12px;cursor:pointer;
+  transition:background 0.15s;
+}
+.reportee-header:hover{background:var(--section)}
+.reportee-avatar{
+  width:36px;height:36px;border-radius:50%;background:#E6F1FB;
+  display:flex;align-items:center;justify-content:center;
+  font-size:12px;font-weight:500;color:#185FA5;flex-shrink:0;
+}
+.reportee-name{font-size:14px;font-weight:500;color:var(--text)}
+.reportee-role{font-size:12px;color:var(--muted)}
+.reportee-status{margin-left:auto;font-size:11px;padding:3px 10px;border-radius:10px}
+.status-pending{background:#F1EFE8;color:var(--muted)}
+.status-done{background:#EAF3DE;color:var(--sage)}
+.reportee-chevron{font-size:12px;color:var(--muted);margin-left:8px;transition:transform 0.2s}
+.reportee-body{display:none;padding:0 0 16px;border-top:1px solid var(--border)}
+.reportee-body.open{display:block}
+
+/* ── SUBMIT AREA ── */
+.submit-area{
+  background:white;border:1px solid var(--border);border-radius:var(--rl);
+  padding:24px;margin-top:28px;text-align:center;
+}
+.submit-area h3{font-family:'DM Serif Display',serif;font-size:20px;color:var(--navy);margin-bottom:6px}
+.submit-area p{font-size:13px;color:var(--muted);margin-bottom:20px}
+.btn-row{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+.btn-primary{
+  padding:12px 28px;background:var(--navy);color:white;border:none;
+  border-radius:8px;font-family:'DM Sans',sans-serif;font-size:14px;
+  font-weight:500;cursor:pointer;transition:all 0.2s;display:inline-flex;align-items:center;gap:8px;
+}
+.btn-primary:hover{background:#1a3f7a}
+.btn-primary:disabled{background:var(--muted);cursor:not-allowed}
+.btn-outline{
+  padding:12px 28px;background:white;color:var(--navy);
+  border:1.5px solid var(--navy);border-radius:8px;
+  font-family:'DM Sans',sans-serif;font-size:14px;font-weight:500;cursor:pointer;transition:all 0.2s;
+}
+.btn-outline:hover{background:var(--navy);color:white}
+
+/* ── PROGRESS ── */
+.progress-wrap{background:var(--border);border-radius:4px;height:5px;margin:16px 0;overflow:hidden}
+.progress-fill{height:100%;background:var(--teal);border-radius:4px;transition:width 0.4s}
+.progress-label{font-size:12px;color:var(--muted);margin-bottom:4px}
+
+/* ── RESULT SCREEN ── */
+#result-screen{display:none;min-height:100vh;background:var(--bg)}
+.result-hero{background:var(--navy);padding:40px 32px;text-align:center}
+.result-hero h2{font-family:'DM Serif Display',serif;color:white;font-size:28px;margin-bottom:8px}
+.result-hero p{color:rgba(255,255,255,0.6);font-size:14px}
+.pathway-badge{
+  display:inline-block;margin-top:16px;padding:8px 24px;border-radius:20px;
+  font-size:15px;font-weight:500;letter-spacing:0.3px;
+}
+.path-Build{background:#EAF3DE;color:#27500A}
+.path-Sustain{background:#E6F1FB;color:#0C447C}
+.path-Develop{background:#FBEAF0;color:#72243E}
+
+.score-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin:24px 0}
+.score-card{background:white;border:1px solid var(--border);border-radius:var(--r);padding:16px;text-align:center}
+.score-card .comp-name-s{font-size:11px;color:var(--muted);margin-bottom:6px}
+.score-card .score-num{font-family:'DM Serif Display',serif;font-size:28px;color:var(--navy)}
+.score-card .score-bench{font-size:11px;color:var(--muted);margin-top:2px}
+.score-bar-wrap{height:4px;background:var(--border);border-radius:2px;margin-top:8px;overflow:hidden}
+.score-bar-fill{height:100%;border-radius:2px;transition:width 0.6s}
+.bar-low{background:#E24B4A}.bar-mid{background:#EF9F27}.bar-ok{background:#639922}
+
+.alert{padding:12px 16px;border-radius:var(--r);font-size:13px;margin-bottom:14px}
+.alert-info{background:#E1F5EE;border:1px solid #9FE1CB;color:#085041}
+.alert-warn{background:#FAEEDA;border:1px solid #FAC775;color:#633806}
+.alert-error{background:#FCEBEB;border:1px solid #F7C1C1;color:#791F1F}
+
+.spinner{display:inline-block;width:16px;height:16px;border:2px solid rgba(255,255,255,0.3);border-top-color:white;border-radius:50%;animation:spin 0.7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ── LEARNING PREFERENCE SECTION ── */
+.pref-section{background:white;border:1px solid var(--border);border-radius:var(--rl);overflow:hidden;margin-bottom:20px}
+.pref-header{background:linear-gradient(135deg,var(--teal) 0%,#004D55 100%);padding:14px 20px;display:flex;align-items:center;gap:10px}
+.pref-header-dot{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,0.6)}
+.pref-header-title{color:white;font-weight:500;font-size:14px}
+.pref-header-sub{color:rgba(255,255,255,0.5);font-size:11px;margin-left:auto}
+.pref-body{padding:20px 22px}
+.pref-q{font-size:14px;font-weight:500;color:var(--text);margin-bottom:10px}
+.pref-desc{font-size:12px;color:var(--muted);margin-bottom:12px;margin-top:-6px}
+
+/* Chip multi-select */
+.chip-group{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:4px}
+.chip{
+  padding:7px 14px;border-radius:20px;font-size:13px;cursor:pointer;
+  border:1.5px solid var(--border2);background:white;color:var(--muted);
+  transition:all 0.15s;user-select:none;
+}
+.chip:hover{border-color:var(--teal);color:var(--teal)}
+.chip.sel{background:var(--teal);border-color:var(--teal);color:white}
+.chip.sel-gold{background:var(--gold);border-color:var(--gold);color:white}
+.chip-limit-note{font-size:11px;color:var(--muted);margin-top:6px;font-style:italic}
+
+/* ── FACULTY SECTION ── */
+.faculty-section{background:white;border:2px solid var(--gold);border-radius:var(--rl);overflow:hidden;margin-bottom:20px}
+.faculty-header{background:linear-gradient(135deg,#7A5A1A 0%,var(--gold) 100%);padding:14px 20px;display:flex;align-items:center;gap:10px}
+.faculty-header-icon{font-size:18px}
+.faculty-header-title{color:white;font-weight:500;font-size:14px}
+.faculty-header-sub{color:rgba(255,255,255,0.65);font-size:11px;margin-left:auto}
+.faculty-body{padding:20px 22px}
+.toggle-row{display:flex;align-items:center;gap:14px;margin-bottom:16px}
+.toggle-label{font-size:14px;color:var(--text)}
+.toggle-wrap{display:flex;gap:0;border:1.5px solid var(--border2);border-radius:8px;overflow:hidden}
+.toggle-opt{padding:8px 20px;font-size:13px;cursor:pointer;background:white;color:var(--muted);border:none;border-right:1.5px solid var(--border2);font-family:'DM Sans',sans-serif;transition:all 0.15s}
+.toggle-opt:last-child{border-right:none}
+.toggle-opt.sel-yes{background:#EAF3DE;color:var(--sage);font-weight:500}
+.toggle-opt.sel-no{background:#F1EFE8;color:var(--muted);font-weight:500}
+.faculty-picks{display:none;margin-top:4px}
+.faculty-picks.open{display:block}
+.subdim-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:8px;margin-top:10px}
+.subdim-chip{
+  display:flex;align-items:flex-start;gap:8px;padding:10px 12px;
+  border:1.5px solid var(--border);border-radius:8px;cursor:pointer;
+  background:white;transition:all 0.15s;
+}
+.subdim-chip:hover{border-color:var(--gold)}
+.subdim-chip.sel{border-color:var(--gold);background:#FAEEDA}
+.subdim-num{
+  width:20px;height:20px;border-radius:50%;background:var(--border);
+  display:flex;align-items:center;justify-content:center;
+  font-size:10px;font-weight:600;color:var(--muted);flex-shrink:0;margin-top:1px;
+  transition:all 0.15s;
+}
+.subdim-chip.sel .subdim-num{background:var(--gold);color:white}
+.subdim-text{font-size:12px;color:var(--text);line-height:1.4}
+.subdim-pillar{font-size:10px;color:var(--muted);margin-top:2px}
+
+/* ── OPEN FIELDS SECTION ── */
+.open-section{background:white;border:1px solid var(--border);border-radius:var(--rl);overflow:hidden;margin-bottom:20px}
+.open-header{background:linear-gradient(135deg,var(--lavender) 0%,#3C3489 100%);padding:14px 20px;display:flex;align-items:center;gap:10px}
+.open-header-title{color:white;font-weight:500;font-size:14px}
+.open-header-sub{color:rgba(255,255,255,0.5);font-size:11px;margin-left:auto}
+.open-body{padding:20px 22px;display:flex;flex-direction:column;gap:16px}
+.open-q{font-size:14px;font-weight:500;color:var(--text);margin-bottom:6px}
+.open-desc{font-size:12px;color:var(--muted);margin-bottom:8px}
+.char-count{font-size:11px;color:var(--muted);text-align:right;margin-top:4px}
+
+@media(max-width:600px){
+  .container{padding:20px 14px}
+  .hero-banner{padding:24px 18px}
+  .btn-row{flex-direction:column;align-items:stretch}
+}
+</style>
+</head>
+<body>
+
+<!-- ═══ LOGIN SCREEN ═══ -->
+<div id="login-screen">
+  <div class="login-card">
+    <div class="login-logo">CA</div>
+    <h1>Marketing TNA 2025</h1>
+    <p>Enter your employee code to begin your Training Needs Assessment</p>
+    <input class="ecode-input" type="text" id="ecode-input" placeholder="e.g. 134139" maxlength="10"
+      onkeydown="if(event.key==='Enter')doLogin()">
+    <button class="login-btn" onclick="doLogin()">Continue →</button>
+    <div class="login-error" id="login-error"></div>
+    <div class="login-hint">Your ecode is your 6-digit employee ID from Cipla systems</div>
+  </div>
+</div>
+
+<!-- ═══ MAIN APP ═══ -->
+<div id="app">
+  <nav class="topbar">
+    <div class="topbar-brand">
+      <div class="brand-logo">CA</div>
+      <div>
+        <div class="brand-text">Cipla Academy</div>
+        <div class="brand-sub">TNA 2025</div>
+      </div>
+    </div>
+    <div class="topbar-tabs">
+      <button class="t-tab active" id="tab-self" onclick="switchTab('self')">My Assessment</button>
+      <button class="t-tab" id="tab-team" onclick="switchTab('team')" style="display:none">
+        Team Assessment <span class="badge" id="team-badge">0</span>
+      </button>
+    </div>
+    <div class="topbar-user">
+      <div class="user-avatar" id="user-initials">--</div>
+      <div class="user-info">
+        <div class="user-name" id="user-name-display">--</div>
+        <div class="user-role" id="user-role-display">--</div>
+      </div>
+      <button class="logout-btn" onclick="doLogout()">Sign out</button>
+    </div>
+  </nav>
+
+  <!-- SELF ASSESSMENT PAGE -->
+  <div class="page active" id="page-self">
+    <div class="hero-banner">
+      <div class="hero-tag">▲ Cipla Marketing Academy · 2025</div>
+      <h2 id="hero-name">Marketing Competency TNA</h2>
+      <p>Rate yourself honestly against each behavioural anchor. This drives your personalised learning journey — not performance evaluation.</p>
+      <div class="hero-meta">
+        <div class="hero-stat"><div class="n" id="q-count">0</div><div class="l">Questions for your role</div></div>
+        <div class="hero-stat"><div class="n" id="answered-count">0</div><div class="l">Answered</div></div>
+        <div class="hero-stat"><div class="n" id="dept-display">—</div><div class="l">Your department</div></div>
+      </div>
+    </div>
+
+    <div class="container">
+      <div class="progress-label" id="prog-label">0% complete</div>
+      <div class="progress-wrap"><div class="progress-fill" id="prog-fill" style="width:0%"></div></div>
+
+      <div id="questionnaire-body"></div>
+
+      <!-- CONTEXT QUESTIONS -->
+      <div style="margin-top:28px">
+        <div class="section-label">Business context</div>
+        <div class="section-title" style="margin-bottom:16px">Linking gaps to your work</div>
+
+        <div class="ctx-block">
+          <div class="ctx-q">What are your 2 biggest business challenges where a capability program could help?</div>
+          <div class="ctx-desc">Be specific — e.g. "I struggle to build differentiated brand plans for me-too products in Respiratory"</div>
+          <textarea class="ctx-textarea" id="ctx-challenge" placeholder="Describe your challenge here..."></textarea>
+        </div>
+
+        <div class="ctx-block">
+          <div class="ctx-q">If you significantly improved your weakest competency, which outcome would improve most?</div>
+          <div class="mcq-opts" id="ctx-impact-opts">
+            <div class="mcq-opt" onclick="selMCQ(this,'impact')"><div class="mcq-circle"></div>Better brand plan quality and campaign differentiation</div>
+            <div class="mcq-opt" onclick="selMCQ(this,'impact')"><div class="mcq-circle"></div>More influential in cross-functional and stakeholder meetings</div>
+            <div class="mcq-opt" onclick="selMCQ(this,'impact')"><div class="mcq-circle"></div>Sharper data-driven decisions in strategy review cycles</div>
+            <div class="mcq-opt" onclick="selMCQ(this,'impact')"><div class="mcq-circle"></div>Better team performance and coaching outcomes</div>
+            <div class="mcq-opt" onclick="selMCQ(this,'impact')"><div class="mcq-circle"></div>Improved NI launch effectiveness and P&L management</div>
+          </div>
+        </div>
+
+        <div class="ctx-block">
+          <div class="ctx-q">How much time can you realistically commit to structured learning per month?</div>
+          <div class="mcq-opts" id="ctx-time-opts">
+            <div class="mcq-opt" onclick="selMCQ(this,'time')"><div class="mcq-circle"></div>Less than 2 hours</div>
+            <div class="mcq-opt" onclick="selMCQ(this,'time')"><div class="mcq-circle"></div>2 – 5 hours</div>
+            <div class="mcq-opt" onclick="selMCQ(this,'time')"><div class="mcq-circle"></div>5 – 8 hours</div>
+            <div class="mcq-opt" onclick="selMCQ(this,'time')"><div class="mcq-circle"></div>More than 8 hours</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- LEARNING PREFERENCES -->
+      <div style="margin-top:28px">
+        <div class="section-label">Learning preferences</div>
+        <div class="section-title" style="margin-bottom:16px">How you learn best</div>
+
+        <div class="pref-section">
+          <div class="pref-header">
+            <div class="pref-header-dot"></div>
+            <div class="pref-header-title">Section B · Learning Preferences</div>
+            <div class="pref-header-sub">Helps us design the right experience for you</div>
+          </div>
+          <div class="pref-body">
+
+            <!-- Learning Style -->
+            <div style="margin-bottom:20px">
+              <div class="pref-q">How do you best absorb and retain new knowledge?</div>
+              <div class="pref-desc">Select one that resonates most with how you naturally learn</div>
+              <div class="chip-group" id="style-chips">
+                <div class="chip" onclick="selSingle(this,'style')">Visual (diagrams, charts, infographics)</div>
+                <div class="chip" onclick="selSingle(this,'style')">Auditory (listening, discussions, podcasts)</div>
+                <div class="chip" onclick="selSingle(this,'style')">Reading (articles, frameworks, decks)</div>
+                <div class="chip" onclick="selSingle(this,'style')">Hands-on (practice, simulations, doing)</div>
+              </div>
+            </div>
+
+            <!-- Preferred Format -->
+            <div style="margin-bottom:20px">
+              <div class="pref-q">Which learning formats work best for you? <span style="color:var(--teal);font-weight:400;font-size:12px">(Select all that apply)</span></div>
+              <div class="pref-desc">Your selections help us prioritise which formats to invest in</div>
+              <div class="chip-group" id="format-chips">
+                <div class="chip" onclick="selMulti(this,'format')">In-person workshop</div>
+                <div class="chip" onclick="selMulti(this,'format')">Virtual live session</div>
+                <div class="chip" onclick="selMulti(this,'format')">E-learning (self-paced)</div>
+                <div class="chip" onclick="selMulti(this,'format')">Coaching / mentoring</div>
+                <div class="chip" onclick="selMulti(this,'format')">Peer learning / group discussion</div>
+                <div class="chip" onclick="selMulti(this,'format')">On-the-job / project based</div>
+                <div class="chip" onclick="selMulti(this,'format')">Nano bytes (3–5 min micro content)</div>
+                <div class="chip" onclick="selMulti(this,'format')">Case studies</div>
+                <div class="chip" onclick="selMulti(this,'format')">Videos</div>
+                <div class="chip" onclick="selMulti(this,'format')">Podcasts</div>
+              </div>
+            </div>
+
+            <!-- Frequency -->
+            <div>
+              <div class="pref-q">How frequently would you prefer structured learning touchpoints?</div>
+              <div class="chip-group" id="freq-chips">
+                <div class="chip" onclick="selSingle(this,'freq')">Weekly (short, regular)</div>
+                <div class="chip" onclick="selSingle(this,'freq')">Monthly (focused sessions)</div>
+                <div class="chip" onclick="selSingle(this,'freq')">Quarterly (deep dives)</div>
+                <div class="chip" onclick="selSingle(this,'freq')">As needed (pull-based)</div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- FACULTY / CAPABILITY BUILDING — MM_SMM and GBM only -->
+      <div id="faculty-section-wrap" style="display:none;margin-top:4px">
+        <div class="faculty-section">
+          <div class="faculty-header">
+            <div class="faculty-header-icon">★</div>
+            <div>
+              <div class="faculty-header-title">Section C · Contribute to Capability Building</div>
+              <div style="color:rgba(255,255,255,0.6);font-size:11px;margin-top:2px">For Marketing Heads and Group Brand Managers</div>
+            </div>
+            <div class="faculty-header-sub">Optional · confidential</div>
+          </div>
+          <div class="faculty-body">
+            <div class="pref-q" style="margin-bottom:8px">Would you like to contribute to capability building for Marketing at Cipla?</div>
+            <div style="font-size:13px;color:var(--muted);margin-bottom:14px;line-height:1.6">
+              As a senior marketing professional, your experience and expertise can shape how we build the next generation of marketing talent at Cipla — through expert talks, case sharing, coaching, or co-designing programs.
+            </div>
+            <div class="toggle-row">
+              <div class="toggle-wrap">
+                <button class="toggle-opt" id="faculty-yes" onclick="toggleFaculty(true)">Yes, I'm interested</button>
+                <button class="toggle-opt" id="faculty-no"  onclick="toggleFaculty(false)">Not at this time</button>
+              </div>
+            </div>
+
+            <div class="faculty-picks" id="faculty-picks">
+              <div class="pref-q">Select your Top 3 areas where you can contribute most <span style="color:var(--gold);font-weight:500">(choose exactly 3)</span></div>
+              <div style="font-size:12px;color:var(--muted);margin-bottom:10px">These are the 14 competency sub-dimensions from the Marketing framework. Pick the 3 where your depth of experience can add the most value to others.</div>
+              <div class="chip-limit-note" id="faculty-count-note">0 of 3 selected</div>
+              <div class="subdim-grid" id="faculty-subdim-grid"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- OPEN EXPRESSION — EVERYONE -->
+      <div style="margin-top:4px">
+        <div class="open-section">
+          <div class="open-header">
+            <div class="open-header-title">Section D · Your Voice</div>
+            <div class="open-header-sub">Tell us what matters to you</div>
+          </div>
+          <div class="open-body">
+
+            <div>
+              <div class="open-q">What specific skill or capability do you most want to develop to become better in your current role?</div>
+              <div class="open-desc">This could be something covered in the competency framework above, or something entirely different. Be as specific as you like — the more context you give, the better we can design for you.</div>
+              <textarea class="ctx-textarea" id="open-role-skill" placeholder="e.g. I want to get much sharper at reading IMS data and translating it into a compelling brand story — I can analyse the numbers but struggle to frame the insight..." maxlength="600" oninput="updateChar('open-role-skill','char-role')"></textarea>
+              <div class="char-count" id="char-role">0 / 600</div>
+            </div>
+
+            <div>
+              <div class="open-q">What skill or experience would most accelerate your career growth — into a bigger role or a different kind of challenge?</div>
+              <div class="open-desc">Think beyond your current role. What capability gap, if closed, would open the next door for you?</div>
+              <textarea class="ctx-textarea" id="open-growth-skill" placeholder="e.g. I want to build stronger P&L literacy and portfolio strategy skills — so I can eventually take on a Marketing Head role with full accountability..." maxlength="600" oninput="updateChar('open-growth-skill','char-growth')"></textarea>
+              <div class="char-count" id="char-growth">0 / 600</div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+        <h3>Ready to submit?</h3>
+        <p>Your scores will be saved securely. You can download your personal PDF report immediately after submitting.</p>
+        <div class="alert alert-warn" id="submit-warning" style="display:none"></div>
+        <div class="btn-row">
+          <button class="btn-outline" onclick="downloadPDF(false)">Preview PDF first</button>
+          <button class="btn-primary" id="submit-btn" onclick="submitAssessment()">Submit & Get My Report →</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TEAM ASSESSMENT PAGE -->
+  <div class="page" id="page-team">
+    <div class="hero-banner">
+      <div class="hero-tag">◈ Manager View</div>
+      <h2>Team Capability Assessment</h2>
+      <p>Rate each of your direct reports on the same competency framework. Your ratings help cross-validate self-assessments and identify blind spots.</p>
+    </div>
+    <div class="container">
+      <div class="info-bar">
+        Rate your team members <strong>independently</strong> — without referring to their self-ratings. This gives L&D the most useful data on development needs.
+      </div>
+      <div id="team-body"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ RESULT SCREEN ═══ -->
+<div id="result-screen">
+  <div class="result-hero">
+    <h2>Assessment Submitted!</h2>
+    <p>Your TNA is complete. Here are your results.</p>
+    <div class="pathway-badge" id="result-pathway-badge">—</div>
+  </div>
+  <div class="container">
+    <div class="alert alert-info" id="result-info"></div>
+    <div class="score-grid" id="result-scores"></div>
+    <div id="result-pathway-detail"></div>
+    <div class="btn-row" style="margin-top:24px">
+      <button class="btn-primary" onclick="downloadPDF(true)">Download My PDF Report</button>
+      <button class="btn-outline" onclick="showTeamIfManager()">Rate My Team →</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════
+// SUPABASE CONFIG
+// ═══════════════════════════════════════════════
+const SUPA_URL = 'https://veogqmakobgsjqqyawff.supabase.co';
+const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZlb2dxbWFrb2Jnc2pxcXlhd2ZmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUxMDAxOTUsImV4cCI6MjA5MDY3NjE5NX0.bBPu_5yxKLM1NU-SaGx9FrlxdPGDM4hluG7md6tdiY0';
+
+async function sbFetch(path, opts={}) {
+  const res = await fetch(`${SUPA_URL}/rest/v1/${path}`, {
+    ...opts,
+    headers: {
+      'apikey': SUPA_KEY,
+      'Authorization': `Bearer ${SUPA_KEY}`,
+      'Content-Type': 'application/json',
+      'Prefer': opts.prefer || 'return=representation',
+      ...(opts.headers||{})
+    }
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(()=>({message:res.statusText}));
+    throw new Error(err.message || res.statusText);
+  }
+  return opts.raw ? res : res.json().catch(()=>null);
+}
+
+// ═══════════════════════════════════════════════
+// COMPETENCY DATA
+// ═══════════════════════════════════════════════
+const COMPS = {
+  BPM: {
+    name:'Brand & Portfolio Management', color:'#0D2B5E',
+    subdims:[
+      {code:'pm1', name:'Product & Therapy Knowledge',
+       anchors:{L:'Understands product profile, indications, and therapy area under supervision.',Ap:'Independently applies product and therapeutic insights to modify marketing strategy.',Ad:'In-depth understanding across wide range of products. Creates compelling value propositions.',Ex:'Coaches others on portfolio analysis. Draws insights across therapy areas to drive optimal outcomes.'}},
+      {code:'pm2', name:'Market Research & Data Analytics',
+       anchors:{L:'Basic understanding of primary/secondary research. Analyses data under supervision.',Ap:'Independently interprets market research. Analyses data and generates insights.',Ad:'Designs specific market research. Transforms complex data into actionable portfolio strategy.',Ex:'Evolves innovative research approaches. Coaches others on analytics. Drives data-driven culture.'}},
+      {code:'pm3', name:'Product Lifecycle Management',
+       anchors:{L:'Basic awareness of lifecycle phases (front-end, mid-life, tail).',Ap:'Independently applies lifecycle components to develop product-specific activities.',Ad:'Designs and allocates resources differentially across lifecycle stages.',Ex:'Expertise in competitive portfolio strategy. Manages full range of products across P&L.'}},
+      {code:'pm4', name:'New Introductions Planning',
+       anchors:{L:'Understands NI development process and key stakeholder groups.',Ap:'Leads NI development process. Works independently with internal stakeholders.',Ad:'Integrates customer/advisory views. Foresees and resolves typical development issues.',Ex:'Expert in NI launch process. Can advise on NI launches across divisions and clusters.'}}
+    ],
+    roles:['BM_SBM','GBL','GBM','MM_SMM']
+  },
+  SM: {
+    name:'Strategic Marketing', color:'#0F6E56',
+    subdims:[
+      {code:'sm1', name:'Strategy Development',
+       anchors:{L:'Understands customer segmentation and different marketing strategies. Creates plans under supervision.',Ap:'Independently creates segments and applies marketing strategies in effective plans.',Ad:'Makes appropriate tradeoff choices. Disproportionate resource allocation for sustained growth.',Ex:'Recognised internal expert. Coaches and mentors on strategic marketing planning.'}},
+      {code:'sm2', name:'Forecast & Scenario Planning',
+       anchors:{L:'Aware of market trends. Understands forecasting process.',Ap:'Applies market trends while creating or adapting marketing plans.',Ad:'Uses deep understanding of evolving trends to anticipate future opportunities.',Ex:'Expert in market dynamics across wide therapeutic classes. Anticipates trends to create innovative solutions.'}},
+      {code:'sm3', name:'Business Acumen',
+       anchors:{L:'Aware and understands P&L and budget management.',Ap:'Independently applies P&L and budget management in marketing plan.',Ad:'Uses deep understanding of P&L to make strategic choices for profitable portfolio growth.',Ex:'Expert in financial concepts. Guides long-term strategic planning for the franchise.'}}
+    ],
+    roles:['GBL','GBM','MM_SMM']
+  },
+  CE: {
+    name:'Communication Excellence', color:'#534AB7',
+    subdims:[
+      {code:'ce1', name:'Strategic Alignment',
+       anchors:{L:'Understands marketing campaign components. Develops brand-linked messages under guidance.',Ap:'Independently aligns messages to brand strategy. Evaluates and takes corrective action.',Ad:'Ensures alignment across group of brands. Makes strategic resource choices.',Ex:'Integrates plans across portfolio/franchise. Guides and coaches on strategic communication.'}},
+      {code:'ce2', name:'Differentiation',
+       anchors:{L:'Aware of customer segments. Develops differentiated communication under guidance.',Ap:'Designs differentiated communication for segments. Communicates effectively with internal teams.',Ad:'Creates compelling messages appropriate to segment needs. Integrates patient centricity.',Ex:'Provides guidance to teams and agencies. Builds patient centricity at the core of communication.'}},
+      {code:'ce3', name:'Channel Management',
+       anchors:{L:'Aware and understands multiple promotional channels and their use.',Ap:'Creates messages across channels. Prioritises channels appropriate to customer segments.',Ad:'Uses deep understanding of omni-channels to create optimal communication strategy.',Ex:'Expert in leveraging omni-channel approach in an integrated and synergistic manner.'}}
+    ],
+    roles:['BM_SBM','GBL','GBM','MM_SMM']
+  },
+  TM: {
+    name:'Talent Mindset', color:'#854F0B',
+    subdims:[
+      {code:'tm1', name:'Talent Management',
+       anchors:{L:'Identifies talent on a need basis. Non-differentiated approach to retention.',Ap:'Creates structured mechanism to attract talent. Provides growth opportunities within team.',Ad:'Creates talent bench through daily interactions. Conducts regular career aspiration discussions.',Ex:'Collaborates to place right talent in right places. Creates culture of high performance.'}},
+      {code:'tm2', name:'Talent Development',
+       anchors:{L:'Provides generalised directions. Cannot identify individual development needs.',Ap:'Identifies individual development needs. Encourages employees to develop in those areas.',Ad:'Takes responsibility for development needs. Proactively coaches in identified areas.',Ex:'Creates culture of ownership of capability development. Implements career development opportunities.'}},
+      {code:'tm3', name:'Performance Review & Feedback',
+       anchors:{L:'Holds performance reviews on ad-hoc basis. Focuses only on performance outcomes.',Ap:'Creates structured review process. Focuses on both what and how of performance.',Ad:'Probes to uncover data. Promotes team ownership of action plans. Holds people accountable.',Ex:'Drives culture of performance orientation. Builds processes for effective governance and review.'}}
+    ],
+    roles:['GBL','GBM','MM_SMM']
+  },
+  AO: {
+    name:'Achievement Orientation', color:'#993C1D',
+    subdims:[
+      {code:'ao1', name:'Drive for Results',
+       anchors:{L:'Inconsistent delivery. Requires supervision. Addresses under-performance reactively.',Ap:'Consistently delivers results. Takes initiative beyond KPIs. Creates key stakeholder relationships.',Ad:'Sets stretch targets. Identifies and addresses performance barriers for self and team.',Ex:'Drives culture of high performance. Anticipates obstacles. Built network including top KOLs.'}},
+      {code:'ao2', name:'Influencing for Results',
+       anchors:{L:'Connects with stakeholders on ad-hoc/need basis.',Ap:'Develops ways to manage stakeholders. Makes persuasive arguments for desired outcomes.',Ad:'Proactively networks. Leverages network for strategic inputs and advisory boards.',Ex:'Assembles cross-functional support. Trains others on building stakeholder influence.'}},
+      {code:'ao3', name:'Ownership & Resilience',
+       anchors:{L:'Makes efforts but may get discouraged in challenging situations.',Ap:'Remains focused on results even in face of challenges. Displays ownership.',Ad:'Helps team stay resilient. Takes thought-through decisions in times of crisis.',Ex:'Builds mindset of moving forward. Leads by example. Displays composure in adversities.'}}
+    ],
+    roles:['BM_SBM','GBL','GBM','MM_SMM']
+  }
+};
+
+// Benchmarks: [threshold, desired] scale 1-4
+const BENCHMARKS = {
+  BM_SBM:{pm1:[1,2],pm2:[1,2],pm3:[1,2],pm4:[1,2],sm1:null,sm2:null,sm3:null,ce1:[1,2],ce2:[1,2],ce3:[1,2],tm1:null,tm2:null,tm3:null,ao1:[1,2],ao2:[1,2],ao3:[1,2]},
+  GBL:   {pm1:[3,4],pm2:[3,4],pm3:[3,4],pm4:[3,4],sm1:[2,3],sm2:[1,3],sm3:[1,2],ce1:[3,4],ce2:[3,4],ce3:[2,3],tm1:[1,2],tm2:[1,2],tm3:[1,2],ao1:[2,3],ao2:[2,3],ao3:[2,3]},
+  GBM:   {pm1:[3,4],pm2:[3,4],pm3:[3,4],pm4:[3,4],sm1:[2,3],sm2:[2,3],sm3:[1,3],ce1:[3,4],ce2:[3,4],ce3:[2,3],tm1:[1,2],tm2:[1,2],tm3:[1,2],ao1:[2,3],ao2:[2,3],ao3:[2,3]},
+  MM_SMM:{pm1:[3,4],pm2:[3,4],pm3:[3,4],pm4:[3,4],sm1:[3,4],sm2:[3,4],sm3:[2,3],ce1:[3,4],ce2:[3,4],ce3:[3,4],tm1:[3,4],tm2:[3,4],tm3:[2,3],ao1:[3,4],ao2:[3,4],ao3:[3,4]}
+};
+
+const PATHWAY_PROGRAMS = {
+  Build:'EMBARK / IGNITE / Analytical Tuesdays — foundational competency development',
+  Sustain:'LEAP / Digital Marketing Certification / Cross-functional Projects — deepening application',
+  Develop:'LEAD X 2.0 / Coach the Coach / SMU Academic Program — leadership and mastery'
+};
+
+// ═══════════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════════
+let currentUser = null;
+let scores = {};      // {pm1:2, ce1:3, ...}
+let mgScores = {};    // {ecode: {pm1:2,...}}
+let ctxData = {challenge:'',impact:'',time:''};
+let submittedResult = null;
+
+// ═══════════════════════════════════════════════
+// LOGIN
+// ═══════════════════════════════════════════════
+async function doLogin() {
+  const raw = document.getElementById('ecode-input').value.trim();
+  const ecode = raw;
+  if (!ecode) { showError('Please enter your employee code'); return; }
+
+  const btn = document.querySelector('.login-btn');
+  btn.innerHTML = '<span class="spinner"></span> Verifying...';
+  btn.disabled = true;
+
+  try {
+    const rows = await sbFetch(`users?ecode=eq.${ecode}&select=*`);
+    if (!rows || rows.length === 0) {
+      showError('Employee code not found. Please check and try again.');
+      btn.innerHTML = 'Continue →'; btn.disabled = false;
+      return;
+    }
+    currentUser = rows[0];
+
+    // Check if already submitted
+    const existing = await sbFetch(`self_assessments?ecode=eq.${ecode}&order=attempt.desc&limit=1`);
+    if (existing && existing.length > 0) {
+      const sa = existing[0];
+      if (confirm(`You have already submitted this TNA (Attempt ${sa.attempt}). Click OK to view your results, or Cancel to re-take.`)) {
+        submittedResult = buildResultFromDB(sa);
+        showResultScreen();
+        return;
+      }
+    }
+
+    initApp();
+    btn.innerHTML = 'Continue →'; btn.disabled = false;
+  } catch(e) {
+    showError('Connection error. Please check your internet and try again.');
+    btn.innerHTML = 'Continue →'; btn.disabled = false;
+  }
+}
+
+function buildResultFromDB(sa) {
+  const s = {};
+  ['pm1','pm2','pm3','pm4','sm1','sm2','sm3','ce1','ce2','ce3','tm1','tm2','tm3','ao1','ao2','ao3']
+    .forEach(k => { if(sa[k+'_score']) s[k] = sa[k+'_score']; });
+  return {
+    scores: s,
+    pathway: sa.pathway_assigned,
+    bpm_avg: sa.bpm_avg, sm_avg: sa.sm_avg, ce_avg: sa.ce_avg,
+    tm_avg: sa.tm_avg, ao_avg: sa.ao_avg, overall_avg: sa.overall_avg
+  };
+}
+
+function showError(msg) {
+  document.getElementById('login-error').textContent = msg;
+}
+
+function doLogout() {
+  currentUser = null; scores = {}; mgScores = {}; submittedResult = null;
+  document.getElementById('login-screen').style.display = 'flex';
+  document.getElementById('app').style.display = 'none';
+  document.getElementById('result-screen').style.display = 'none';
+  document.getElementById('ecode-input').value = '';
+  document.getElementById('login-error').textContent = '';
+}
+
+// ═══════════════════════════════════════════════
+// INIT APP
+// ═══════════════════════════════════════════════
+function initApp() {
+  document.getElementById('login-screen').style.display = 'none';
+  document.getElementById('app').style.display = 'block';
+
+  const u = currentUser;
+  const initials = u.full_name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+  document.getElementById('user-initials').textContent = initials;
+  document.getElementById('user-name-display').textContent = u.full_name;
+  document.getElementById('user-role-display').textContent = u.role_title;
+  document.getElementById('hero-name').textContent = `Hello, ${u.full_name.split(' ')[0]}`;
+  document.getElementById('dept-display').textContent = u.dept1 || '—';
+
+  buildQuestionnaire();
+  showFacultyIfApplicable();
+
+  // Show team tab for managers
+  if (u.is_manager) {
+    document.getElementById('tab-team').style.display = 'flex';
+    buildTeamTab();
+  }
+}
+
+// ═══════════════════════════════════════════════
+// BUILD QUESTIONNAIRE
+// ═══════════════════════════════════════════════
+function getApplicableComps(role) {
+  return Object.entries(COMPS).filter(([,c]) => c.roles.includes(role));
+}
+
+function buildQuestionnaire() {
+  const role = currentUser.role;
+  const applicable = getApplicableComps(role);
+  const totalQ = applicable.reduce((n,[,c])=>n+c.subdims.length,0);
+  document.getElementById('q-count').textContent = totalQ;
+
+  let html = '';
+  let qNum = 1;
+  applicable.forEach(([key, comp]) => {
+    html += `<div style="margin-bottom:20px">
+      <div class="comp-header">
+        <div class="comp-dot"></div>
+        <div class="comp-name">${comp.name}</div>
+        <div class="comp-tag">${comp.subdims.length} dimensions</div>
+      </div>`;
+    comp.subdims.forEach(sd => {
+      const bench = BENCHMARKS[role][sd.code];
+      const benchText = bench
+        ? `Your benchmark → Threshold: <strong>${['','Learning','Applying','Advanced','Expert'][bench[0]]}</strong> · Desired: <strong>${['','Learning','Applying','Advanced','Expert'][bench[1]]}</strong>`
+        : 'Not applicable for your role';
+      html += `
+      <div class="q-item" id="qi-${sd.code}">
+        <div class="q-meta">Q${qNum} · ${sd.code.toUpperCase()}</div>
+        <div class="q-subdim">${sd.name}</div>
+        <div class="q-text">Where do you honestly operate today on <strong>${sd.name}</strong>?</div>
+        <div class="prof-bar" data-code="${sd.code}">
+          <div class="prof-opt prof-L" onclick="selectScore('${sd.code}',1,this)">
+            <div class="pl">L</div><div class="ps">Learning</div>
+          </div>
+          <div class="prof-opt prof-Ap" onclick="selectScore('${sd.code}',2,this)">
+            <div class="pl">Ap</div><div class="ps">Applying</div>
+          </div>
+          <div class="prof-opt prof-Ad" onclick="selectScore('${sd.code}',3,this)">
+            <div class="pl">Ad</div><div class="ps">Advanced</div>
+          </div>
+          <div class="prof-opt prof-Ex" onclick="selectScore('${sd.code}',4,this)">
+            <div class="pl">Ex</div><div class="ps">Expert</div>
+          </div>
+        </div>
+        <div class="anchor-box">
+          <span class="al">L:</span> ${sd.anchors.L} &nbsp;|&nbsp;
+          <span class="al">Ap:</span> ${sd.anchors.Ap} &nbsp;|&nbsp;
+          <span class="al">Ad:</span> ${sd.anchors.Ad} &nbsp;|&nbsp;
+          <span class="al">Ex:</span> ${sd.anchors.Ex}
+        </div>
+        <div style="margin-top:8px;font-size:11px;color:var(--muted)">${benchText}</div>
+      </div>`;
+      qNum++;
+    });
+    html += '</div>';
+  });
+
+  document.getElementById('questionnaire-body').innerHTML = html;
+  updateProgress();
+}
+
+function selectScore(code, val, el) {
+  const bar = el.closest('.prof-bar');
+  bar.querySelectorAll('.prof-opt').forEach(o=>o.classList.remove('sel'));
+  el.classList.add('sel');
+  scores[code] = val;
+  updateProgress();
+}
+
+function selMCQ(el, type) {
+  const grp = el.closest('.mcq-opts');
+  grp.querySelectorAll('.mcq-opt').forEach(o=>o.classList.remove('sel'));
+  el.classList.add('sel');
+  if (type==='impact') ctxData.impact = el.textContent.trim();
+  if (type==='time')   ctxData.time   = el.textContent.trim();
+}
+
+function updateProgress() {
+  const role = currentUser.role;
+  const applicable = getApplicableComps(role);
+  const totalQ = applicable.reduce((n,[,c])=>n+c.subdims.length,0);
+  const answered = Object.keys(scores).length;
+  const pct = Math.round(answered/totalQ*100);
+  document.getElementById('prog-fill').style.width = pct+'%';
+  document.getElementById('prog-label').textContent = `${pct}% complete — ${answered} of ${totalQ} questions answered`;
+  document.getElementById('answered-count').textContent = answered;
+}
+
+// ═══════════════════════════════════════════════
+// LEARNING PREFERENCES & FACULTY JS
+// ═══════════════════════════════════════════════
+let prefData = { style:'', formats:[], frequency:'' };
+let facultyData = { interested: null, top3: [] };
+
+// Single select chips (style, frequency)
+function selSingle(el, group) {
+  const grp = document.getElementById(group+'-chips');
+  grp.querySelectorAll('.chip').forEach(c => c.classList.remove('sel'));
+  el.classList.add('sel');
+  if (group === 'style')  prefData.style     = el.textContent.trim();
+  if (group === 'freq')   prefData.frequency = el.textContent.trim();
+}
+
+// Multi select chips (formats)
+function selMulti(el, group) {
+  el.classList.toggle('sel');
+  if (group === 'format') {
+    const grp = document.getElementById('format-chips');
+    prefData.formats = [...grp.querySelectorAll('.chip.sel')].map(c => c.textContent.trim());
+  }
+}
+
+// Faculty toggle
+function toggleFaculty(yes) {
+  facultyData.interested = yes;
+  document.getElementById('faculty-yes').classList.toggle('sel-yes', yes);
+  document.getElementById('faculty-no').classList.toggle('sel-no', !yes);
+  document.getElementById('faculty-yes').classList.toggle('sel-no', false);
+  document.getElementById('faculty-no').classList.toggle('sel-yes', false);
+  document.getElementById('faculty-picks').classList.toggle('open', yes);
+  if (!yes) { facultyData.top3 = []; updateFacultyCount(); }
+}
+
+// Build subdim grid for faculty
+function buildFacultyGrid() {
+  const ALL_SUBDIMS = [
+    {code:'pm1',label:'Product & Therapy Knowledge',pillar:'Brand & Portfolio'},
+    {code:'pm2',label:'Market Research & Data Analytics',pillar:'Brand & Portfolio'},
+    {code:'pm3',label:'Product Lifecycle Management',pillar:'Brand & Portfolio'},
+    {code:'pm4',label:'New Introductions Planning',pillar:'Brand & Portfolio'},
+    {code:'sm1',label:'Strategy Development',pillar:'Strategic Marketing'},
+    {code:'sm2',label:'Forecast & Scenario Planning',pillar:'Strategic Marketing'},
+    {code:'sm3',label:'Business Acumen',pillar:'Strategic Marketing'},
+    {code:'ce1',label:'Strategic Alignment',pillar:'Communication Excellence'},
+    {code:'ce2',label:'Differentiation',pillar:'Communication Excellence'},
+    {code:'ce3',label:'Channel Management',pillar:'Communication Excellence'},
+    {code:'tm1',label:'Talent Management',pillar:'Talent Mindset'},
+    {code:'tm2',label:'Talent Development',pillar:'Talent Mindset'},
+    {code:'tm3',label:'Performance Review & Feedback',pillar:'Talent Mindset'},
+    {code:'ao1',label:'Drive for Results',pillar:'Achievement Orientation'},
+    {code:'ao2',label:'Influencing for Results',pillar:'Achievement Orientation'},
+    {code:'ao3',label:'Ownership & Resilience',pillar:'Achievement Orientation'},
+  ];
+  const grid = document.getElementById('faculty-subdim-grid');
+  grid.innerHTML = ALL_SUBDIMS.map(sd => `
+    <div class="subdim-chip" id="fsd-${sd.code}" onclick="toggleSubdim('${sd.code}','${sd.label}')">
+      <div class="subdim-num" id="fnum-${sd.code}">—</div>
+      <div>
+        <div class="subdim-text">${sd.label}</div>
+        <div class="subdim-pillar">${sd.pillar}</div>
+      </div>
+    </div>`).join('');
+}
+
+function toggleSubdim(code, label) {
+  const chip = document.getElementById('fsd-'+code);
+  const isSelected = chip.classList.contains('sel');
+  if (!isSelected && facultyData.top3.length >= 3) {
+    document.getElementById('faculty-count-note').style.color = '#A32D2D';
+    document.getElementById('faculty-count-note').textContent = 'Maximum 3 selected — deselect one first';
+    setTimeout(() => updateFacultyCount(), 2000);
+    return;
+  }
+  chip.classList.toggle('sel');
+  if (isSelected) {
+    facultyData.top3 = facultyData.top3.filter(c => c !== code);
+  } else {
+    facultyData.top3.push(code);
+  }
+  // Update rank numbers
+  updateFacultyNumbers();
+  updateFacultyCount();
+}
+
+function updateFacultyNumbers() {
+  // Reset all
+  document.querySelectorAll('[id^="fnum-"]').forEach(el => { el.textContent='—'; });
+  facultyData.top3.forEach((code, i) => {
+    const el = document.getElementById('fnum-'+code);
+    if (el) el.textContent = i+1;
+  });
+}
+
+function updateFacultyCount() {
+  const note = document.getElementById('faculty-count-note');
+  const n = facultyData.top3.length;
+  note.style.color = n === 3 ? 'var(--sage)' : 'var(--muted)';
+  note.textContent = n === 3 ? '✓ Top 3 selected' : `${n} of 3 selected`;
+}
+
+function updateChar(textareaId, countId) {
+  const ta = document.getElementById(textareaId);
+  const ct = document.getElementById(countId);
+  if (ta && ct) ct.textContent = `${ta.value.length} / 600`;
+}
+
+// Show faculty section for MM_SMM and GBM
+function showFacultyIfApplicable() {
+  const role = currentUser.role;
+  if (role === 'MM_SMM' || role === 'GBM') {
+    document.getElementById('faculty-section-wrap').style.display = 'block';
+    buildFacultyGrid();
+  }
+}
+
+// ═══════════════════════════════════════════════
+// LEARNING PREFERENCE JS — END
+// ═══════════════════════════════════════════════
+
+function computeScores() {
+  const role = currentUser.role;
+  const bench = BENCHMARKS[role];
+
+  // Per-pillar averages (only applicable subdims)
+  const pillars = {
+    BPM: ['pm1','pm2','pm3','pm4'],
+    SM:  ['sm1','sm2','sm3'],
+    CE:  ['ce1','ce2','ce3'],
+    TM:  ['tm1','tm2','tm3'],
+    AO:  ['ao1','ao2','ao3']
+  };
+
+  const avgs = {};
+  Object.entries(pillars).forEach(([pillar, codes]) => {
+    const applicable = codes.filter(c => bench[c] !== null);
+    if (!applicable.length) { avgs[pillar.toLowerCase()] = null; return; }
+    const vals = applicable.map(c=>scores[c]).filter(v=>v!=null);
+    avgs[pillar.toLowerCase()+'_avg'] = vals.length ? +(vals.reduce((a,b)=>a+b,0)/vals.length).toFixed(2) : null;
+  });
+
+  // Overall avg across applicable
+  const allApplicable = Object.entries(bench).filter(([,v])=>v!==null).map(([k])=>k);
+  const allVals = allApplicable.map(c=>scores[c]).filter(v=>v!=null);
+  const overall_avg = allVals.length ? +(allVals.reduce((a,b)=>a+b,0)/allVals.length).toFixed(2) : null;
+
+  // Gap analysis for pathway
+  let belowThreshold = 0, atThreshold = 0, atDesired = 0;
+  allApplicable.forEach(code => {
+    const s = scores[code];
+    const [t, d] = bench[code];
+    if (!s) return;
+    if (s < t) belowThreshold++;
+    else if (s < d) atThreshold++;
+    else atDesired++;
+  });
+
+  let pathway = 'Sustain';
+  if (belowThreshold >= 2) pathway = 'Build';
+  else if (atDesired >= Math.floor(allApplicable.length * 0.6)) pathway = 'Develop';
+
+  return { ...avgs, overall_avg, pathway_assigned: pathway, belowThreshold, atThreshold, atDesired };
+}
+
+// ═══════════════════════════════════════════════
+// SUBMIT
+// ═══════════════════════════════════════════════
+async function submitAssessment() {
+  // Validate
+  const role = currentUser.role;
+  const applicable = getApplicableComps(role);
+  const allCodes = applicable.flatMap(([,c])=>c.subdims.map(s=>s.code));
+  const unanswered = allCodes.filter(c=>!scores[c]);
+  if (unanswered.length > 0) {
+    const warn = document.getElementById('submit-warning');
+    warn.style.display = 'block';
+    warn.textContent = `Please answer all ${unanswered.length} remaining question(s) before submitting.`;
+    document.getElementById('qi-'+unanswered[0])?.scrollIntoView({behavior:'smooth',block:'center'});
+    return;
+  }
+
+  const btn = document.getElementById('submit-btn');
+  btn.innerHTML = '<span class="spinner"></span> Submitting...';
+  btn.disabled = true;
+
+  try {
+    ctxData.challenge = document.getElementById('ctx-challenge').value.trim();
+    const computed = computeScores();
+
+    // Collect new fields
+    const skillForRole   = document.getElementById('open-role-skill')?.value.trim()||'';
+    const skillForGrowth = document.getElementById('open-growth-skill')?.value.trim()||'';
+
+    // Get next attempt number
+    const existing = await sbFetch(`self_assessments?ecode=eq.${currentUser.ecode}&select=attempt&order=attempt.desc&limit=1`);
+    const nextAttempt = existing && existing.length > 0 ? existing[0].attempt + 1 : 1;
+
+    const payload = {
+      ecode: currentUser.ecode,
+      attempt: nextAttempt,
+      pm1_score: scores.pm1||null, pm2_score: scores.pm2||null,
+      pm3_score: scores.pm3||null, pm4_score: scores.pm4||null,
+      sm1_score: scores.sm1||null, sm2_score: scores.sm2||null, sm3_score: scores.sm3||null,
+      ce1_score: scores.ce1||null, ce2_score: scores.ce2||null, ce3_score: scores.ce3||null,
+      tm1_score: scores.tm1||null, tm2_score: scores.tm2||null, tm3_score: scores.tm3||null,
+      ao1_score: scores.ao1||null, ao2_score: scores.ao2||null, ao3_score: scores.ao3||null,
+      business_challenge: ctxData.challenge,
+      impact_area: ctxData.impact,
+      time_available: ctxData.time,
+      // Learning preferences
+      learning_style:      prefData.style||null,
+      preferred_formats:   prefData.formats.length ? prefData.formats.join(', ') : null,
+      preferred_frequency: prefData.frequency||null,
+      // Faculty interest
+      faculty_interest: facultyData.interested === true,
+      faculty_top3:     facultyData.top3.length ? facultyData.top3.join(', ') : null,
+      // Open fields
+      skill_for_role:   skillForRole||null,
+      skill_for_growth: skillForGrowth||null,
+      // Scores
+      bpm_avg: computed.bpm_avg||null,
+      sm_avg:  computed.sm_avg||null,
+      ce_avg:  computed.ce_avg||null,
+      tm_avg:  computed.tm_avg||null,
+      ao_avg:  computed.ao_avg||null,
+      overall_avg: computed.overall_avg,
+      pathway_assigned: computed.pathway_assigned
+    };
+
+    await sbFetch('self_assessments', {
+      method: 'POST',
+      body: JSON.stringify(payload),
+      prefer: 'return=minimal'
+    });
+
+    // Audit log
+    sbFetch('audit_log', {
+      method:'POST',
+      body: JSON.stringify({ecode:currentUser.ecode, action:'submit_self', metadata:{attempt:nextAttempt, pathway:computed.pathway_assigned}}),
+      prefer:'return=minimal'
+    }).catch(()=>{});
+
+    submittedResult = {
+      scores, pathway: computed.pathway_assigned,
+      bpm_avg: computed.bpm_avg, sm_avg: computed.sm_avg,
+      ce_avg: computed.ce_avg, tm_avg: computed.tm_avg,
+      ao_avg: computed.ao_avg, overall_avg: computed.overall_avg
+    };
+
+    showResultScreen();
+  } catch(e) {
+    alert('Submission failed: ' + e.message + '\n\nPlease try again or contact the L&D team.');
+    btn.innerHTML = 'Submit & Get My Report →';
+    btn.disabled = false;
+  }
+}
+
+// ═══════════════════════════════════════════════
+// RESULT SCREEN
+// ═══════════════════════════════════════════════
+function showResultScreen() {
+  document.getElementById('app').style.display = 'none';
+  document.getElementById('login-screen').style.display = 'none';
+  document.getElementById('result-screen').style.display = 'block';
+
+  const r = submittedResult;
+  const pathway = r.pathway;
+
+  const badge = document.getElementById('result-pathway-badge');
+  badge.textContent = pathway + ' Pathway';
+  badge.className = 'pathway-badge path-'+pathway;
+
+  document.getElementById('result-info').textContent =
+    `Your recommended learning pathway: ${PATHWAY_PROGRAMS[pathway]}`;
+
+  // Score grid
+  const pillarData = [
+    {key:'bpm_avg', label:'Brand & Portfolio', color:'#0D2B5E'},
+    {key:'sm_avg',  label:'Strategic Marketing', color:'#0F6E56'},
+    {key:'ce_avg',  label:'Communication', color:'#534AB7'},
+    {key:'tm_avg',  label:'Talent Mindset', color:'#854F0B'},
+    {key:'ao_avg',  label:'Achievement', color:'#993C1D'}
+  ];
+
+  let scoreHtml = '';
+  pillarData.forEach(p => {
+    const val = r[p.key];
+    if (val === null) return;
+    const pct = Math.round(val/4*100);
+    const barClass = pct < 40 ? 'bar-low' : pct < 65 ? 'bar-mid' : 'bar-ok';
+    scoreHtml += `<div class="score-card">
+      <div class="comp-name-s">${p.label}</div>
+      <div class="score-num" style="color:${p.color}">${val.toFixed(1)}</div>
+      <div class="score-bench">out of 4.0</div>
+      <div class="score-bar-wrap"><div class="score-bar-fill ${barClass}" style="width:${pct}%"></div></div>
+    </div>`;
+  });
+  scoreHtml += `<div class="score-card">
+    <div class="comp-name-s">Overall Average</div>
+    <div class="score-num">${r.overall_avg?.toFixed(1)||'—'}</div>
+    <div class="score-bench">out of 4.0</div>
+    <div class="score-bar-wrap"><div class="score-bar-fill bar-mid" style="width:${Math.round((r.overall_avg||0)/4*100)}%"></div></div>
+  </div>`;
+  document.getElementById('result-scores').innerHTML = scoreHtml;
+
+  // Team button visibility
+  const teamBtn = document.querySelector('#result-screen .btn-outline');
+  if (!currentUser?.is_manager) teamBtn.style.display = 'none';
+}
+
+function showTeamIfManager() {
+  document.getElementById('result-screen').style.display = 'none';
+  document.getElementById('app').style.display = 'block';
+  switchTab('team');
+}
+
+// ═══════════════════════════════════════════════
+// TEAM TAB (MANAGER)
+// ═══════════════════════════════════════════════
+async function buildTeamTab() {
+  try {
+    const reportees = await sbFetch(
+      `users?manager_ecode=eq.${currentUser.ecode}&select=ecode,full_name,role_title,role,dept1,dept2`
+    );
+    if (!reportees || reportees.length === 0) {
+      document.getElementById('team-body').innerHTML =
+        '<div class="alert alert-info">No direct reportees found for your ecode in the system. Please contact the L&D team.</div>';
+      document.getElementById('team-badge').textContent = '0';
+      return;
+    }
+
+    document.getElementById('team-badge').textContent = reportees.length;
+
+    // Check which reportees already have manager ratings
+    const existing = await sbFetch(
+      `manager_assessments?manager_ecode=eq.${currentUser.ecode}&select=ratee_ecode,attempt`
+    ).catch(()=>[]);
+    const rated = new Set((existing||[]).map(r=>r.ratee_ecode));
+
+    let html = `<div class="alert alert-info" style="margin-bottom:20px">
+      You have <strong>${reportees.length} direct reports</strong> to assess. Rate each independently — your ratings are confidential from the individual.
+    </div>`;
+
+    reportees.forEach(rep => {
+      const initials = rep.full_name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+      const isDone = rated.has(rep.ecode);
+      html += `
+      <div class="reportee-card" id="rc-${rep.ecode}">
+        <div class="reportee-header" onclick="toggleReportee('${rep.ecode}')">
+          <div class="reportee-avatar">${initials}</div>
+          <div>
+            <div class="reportee-name">${rep.full_name}</div>
+            <div class="reportee-role">${rep.role_title} · ${rep.dept1}${rep.dept2?' / '+rep.dept2:''}</div>
+          </div>
+          <span class="reportee-status ${isDone?'status-done':'status-pending'}">${isDone?'Rated':'Pending'}</span>
+          <span class="reportee-chevron" id="chev-${rep.ecode}">▼</span>
+        </div>
+        <div class="reportee-body" id="rb-${rep.ecode}">
+          ${buildRepQs(rep)}
+          <div style="padding:16px 22px">
+            <label style="display:block;font-size:13px;font-weight:500;color:var(--text);margin-bottom:6px">Additional notes (optional)</label>
+            <textarea class="ctx-textarea" id="notes-${rep.ecode}" placeholder="Any development observations for this team member..."></textarea>
+            <div style="margin-top:12px;display:flex;gap:10px">
+              <button class="btn-primary" onclick="submitManagerRating('${rep.ecode}','${rep.role}')">
+                Save Rating for ${rep.full_name.split(' ')[0]}
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>`;
+    });
+
+    document.getElementById('team-body').innerHTML = html;
+  } catch(e) {
+    document.getElementById('team-body').innerHTML =
+      `<div class="alert alert-error">Could not load team: ${e.message}</div>`;
+  }
+}
+
+function buildRepQs(rep) {
+  const role = rep.role;
+  const applicable = getApplicableComps(role);
+  let html = '<div style="padding:16px 22px 0">';
+  applicable.forEach(([key, comp]) => {
+    html += `<div style="margin-bottom:16px">
+      <div style="font-size:12px;font-weight:500;color:var(--navy);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px">${comp.name}</div>`;
+    comp.subdims.forEach(sd => {
+      html += `<div style="margin-bottom:10px">
+        <div style="font-size:13px;color:var(--text);margin-bottom:6px">${sd.name}</div>
+        <div class="prof-bar" data-ratee="${rep.ecode}" data-code="${sd.code}">
+          <div class="prof-opt prof-L" onclick="selectMgrScore('${rep.ecode}','${sd.code}',1,this)"><div class="pl">L</div><div class="ps">Learning</div></div>
+          <div class="prof-opt prof-Ap" onclick="selectMgrScore('${rep.ecode}','${sd.code}',2,this)"><div class="pl">Ap</div><div class="ps">Applying</div></div>
+          <div class="prof-opt prof-Ad" onclick="selectMgrScore('${rep.ecode}','${sd.code}',3,this)"><div class="pl">Ad</div><div class="ps">Advanced</div></div>
+          <div class="prof-opt prof-Ex" onclick="selectMgrScore('${rep.ecode}','${sd.code}',4,this)"><div class="pl">Ex</div><div class="ps">Expert</div></div>
+        </div>
+      </div>`;
+    });
+    html += '</div>';
+  });
+  html += '</div>';
+  return html;
+}
+
+function selectMgrScore(rateeEcode, code, val, el) {
+  const bar = el.closest('.prof-bar');
+  bar.querySelectorAll('.prof-opt').forEach(o=>o.classList.remove('sel'));
+  el.classList.add('sel');
+  if (!mgScores[rateeEcode]) mgScores[rateeEcode] = {};
+  mgScores[rateeEcode][code] = val;
+}
+
+function toggleReportee(ecode) {
+  const body = document.getElementById('rb-'+ecode);
+  const chev = document.getElementById('chev-'+ecode);
+  const isOpen = body.classList.contains('open');
+  body.classList.toggle('open');
+  chev.textContent = isOpen ? '▼' : '▲';
+}
+
+async function submitManagerRating(rateeEcode, rateeRole) {
+  const s = mgScores[rateeEcode] || {};
+  const applicable = getApplicableComps(rateeRole);
+  const allCodes = applicable.flatMap(([,c])=>c.subdims.map(sd=>sd.code));
+  const missing = allCodes.filter(c=>!s[c]);
+  if (missing.length > 0) {
+    alert(`Please rate all ${missing.length} competency dimension(s) before saving.`);
+    return;
+  }
+
+  // Compute manager pillar avgs
+  const calcAvg = (codes) => {
+    const vals = codes.map(c=>s[c]).filter(v=>v!=null);
+    return vals.length ? +(vals.reduce((a,b)=>a+b,0)/vals.length).toFixed(2) : null;
+  };
+
+  const payload = {
+    manager_ecode: currentUser.ecode,
+    ratee_ecode: rateeEcode,
+    attempt: 1,
+    pm1_score:s.pm1||null, pm2_score:s.pm2||null, pm3_score:s.pm3||null, pm4_score:s.pm4||null,
+    sm1_score:s.sm1||null, sm2_score:s.sm2||null, sm3_score:s.sm3||null,
+    ce1_score:s.ce1||null, ce2_score:s.ce2||null, ce3_score:s.ce3||null,
+    tm1_score:s.tm1||null, tm2_score:s.tm2||null, tm3_score:s.tm3||null,
+    ao1_score:s.ao1||null, ao2_score:s.ao2||null, ao3_score:s.ao3||null,
+    bpm_avg: calcAvg(['pm1','pm2','pm3','pm4']),
+    sm_avg:  calcAvg(['sm1','sm2','sm3']),
+    ce_avg:  calcAvg(['ce1','ce2','ce3']),
+    tm_avg:  calcAvg(['tm1','tm2','tm3']),
+    ao_avg:  calcAvg(['ao1','ao2','ao3']),
+    manager_notes: document.getElementById('notes-'+rateeEcode)?.value.trim()||''
+  };
+
+  try {
+    await sbFetch('manager_assessments', {
+      method:'POST', body:JSON.stringify(payload), prefer:'return=minimal'
+    });
+    // Update status badge
+    const statusEl = document.querySelector(`#rc-${rateeEcode} .reportee-status`);
+    if (statusEl) { statusEl.textContent='Rated'; statusEl.className='reportee-status status-done'; }
+    toggleReportee(rateeEcode);
+    alert('Rating saved successfully.');
+  } catch(e) {
+    alert('Failed to save rating: '+e.message);
+  }
+}
+
+// ═══════════════════════════════════════════════
+// PDF REPORT
+// ═══════════════════════════════════════════════
+function downloadPDF(useSubmitted) {
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({orientation:'portrait', unit:'mm', format:'a4'});
+  const u = currentUser;
+  const r = useSubmitted ? submittedResult : (() => {
+    ctxData.challenge = document.getElementById('ctx-challenge')?.value.trim()||'';
+    const c = computeScores();
+    return {scores, pathway:c.pathway_assigned, bpm_avg:c.bpm_avg, sm_avg:c.sm_avg,
+            ce_avg:c.ce_avg, tm_avg:c.tm_avg, ao_avg:c.ao_avg, overall_avg:c.overall_avg};
+  })();
+
+  const W=210, M=20;
+  let y = 0;
+
+  // Header
+  doc.setFillColor(13,43,94);
+  doc.rect(0,0,W,38,'F');
+  doc.setTextColor(255,255,255);
+  doc.setFontSize(18); doc.setFont('helvetica','bold');
+  doc.text('Cipla Marketing Academy', M, 14);
+  doc.setFontSize(11); doc.setFont('helvetica','normal');
+  doc.text('Training Needs Assessment Report · 2025', M, 22);
+  doc.setFontSize(9);
+  doc.text(`Generated: ${new Date().toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'})}`, W-M, 22, {align:'right'});
+
+  // Person info band
+  doc.setFillColor(249,248,246);
+  doc.rect(0,38,W,22,'F');
+  doc.setTextColor(13,43,94);
+  doc.setFontSize(13); doc.setFont('helvetica','bold');
+  doc.text(u.full_name, M, 49);
+  doc.setFontSize(9); doc.setFont('helvetica','normal'); doc.setTextColor(136,135,128);
+  doc.text(`${u.role_title} · ${u.dept1||''}${u.dept2?' / '+u.dept2:''}${u.dept3?' / '+u.dept3:''}`, M, 55);
+  doc.text(`Employee Code: ${u.ecode}`, W-M, 49, {align:'right'});
+
+  y = 70;
+
+  // Pathway badge
+  const pathColors = {Build:[234,243,222],Sustain:[230,241,251],Develop:[251,234,240]};
+  const pathText = {Build:[39,80,10],Sustain:[12,68,124],Develop:[75,21,40]};
+  const pc = pathColors[r.pathway]||[240,240,240];
+  const pt = pathText[r.pathway]||[50,50,50];
+  doc.setFillColor(...pc);
+  doc.roundedRect(M,y,W-2*M,14,3,3,'F');
+  doc.setTextColor(...pt);
+  doc.setFontSize(11); doc.setFont('helvetica','bold');
+  doc.text(`Recommended Pathway: ${r.pathway}`, W/2, y+9, {align:'center'});
+  y += 20;
+
+  doc.setFontSize(9); doc.setFont('helvetica','normal'); doc.setTextColor(136,135,128);
+  doc.text(PATHWAY_PROGRAMS[r.pathway]||'', W/2, y, {align:'center'});
+  y += 10;
+
+  // Scores table
+  doc.setFontSize(10); doc.setFont('helvetica','bold'); doc.setTextColor(13,43,94);
+  doc.text('Competency Pillar Scores', M, y); y+=6;
+
+  const pillars = [
+    {label:'Brand & Portfolio Management', key:'bpm_avg', codes:['pm1','pm2','pm3','pm4']},
+    {label:'Strategic Marketing',          key:'sm_avg',  codes:['sm1','sm2','sm3']},
+    {label:'Communication Excellence',     key:'ce_avg',  codes:['ce1','ce2','ce3']},
+    {label:'Talent Mindset',               key:'tm_avg',  codes:['tm1','tm2','tm3']},
+    {label:'Achievement Orientation',      key:'ao_avg',  codes:['ao1','ao2','ao3']},
+  ];
+
+  const bench = BENCHMARKS[u.role];
+  pillars.forEach(p => {
+    const avg = r[p.key];
+    if (avg === null) return;
+    const applicable = p.codes.filter(c=>bench[c]!==null);
+    if (!applicable.length) return;
+
+    doc.setFillColor(249,248,246);
+    doc.rect(M, y, W-2*M, 20, 'F');
+    doc.setDrawColor(224,221,214);
+    doc.rect(M, y, W-2*M, 20, 'S');
+
+    doc.setTextColor(13,43,94); doc.setFont('helvetica','bold'); doc.setFontSize(9);
+    doc.text(p.label, M+4, y+7);
+
+    doc.setTextColor(136,135,128); doc.setFont('helvetica','normal'); doc.setFontSize(8);
+    const subScores = applicable.map(c=>{
+      const lvl=['','L','Ap','Ad','Ex'][r.scores?.[c]||0]||'—';
+      const [t,d] = bench[c];
+      const status = !r.scores?.[c] ? '?' : r.scores[c] < t ? '▼' : r.scores[c] < d ? '◆' : '✓';
+      return `${c.toUpperCase()}: ${lvl} ${status}`;
+    }).join('  |  ');
+    doc.text(subScores, M+4, y+14);
+
+    // Score pill
+    const scoreColor = avg < 2 ? [231,75,74] : avg < 3 ? [186,117,23] : [99,153,34];
+    doc.setFillColor(...scoreColor);
+    doc.roundedRect(W-M-22, y+4, 18, 12, 2, 2, 'F');
+    doc.setTextColor(255,255,255); doc.setFont('helvetica','bold'); doc.setFontSize(10);
+    doc.text(avg.toFixed(1)+'/4', W-M-13, y+12, {align:'center'});
+
+    y += 22;
+  });
+
+  // Overall
+  doc.setFillColor(13,43,94);
+  doc.rect(M, y, W-2*M, 12, 'F');
+  doc.setTextColor(255,255,255); doc.setFont('helvetica','bold'); doc.setFontSize(10);
+  doc.text('Overall Average', M+4, y+8);
+  doc.text((r.overall_avg||0).toFixed(1)+' / 4.0', W-M-4, y+8, {align:'right'});
+  y += 18;
+
+  // Legend
+  doc.setFontSize(8); doc.setFont('helvetica','normal'); doc.setTextColor(136,135,128);
+  doc.text('▼ Below Threshold  ◆ Threshold met, gap to Desired  ✓ At or above Desired', M, y);
+  y += 10;
+
+  // Business context
+  if (ctxData.challenge || r.challenge) {
+    doc.setFontSize(10); doc.setFont('helvetica','bold'); doc.setTextColor(13,43,94);
+    doc.text('Business Context', M, y); y += 6;
+    doc.setFontSize(8); doc.setFont('helvetica','normal'); doc.setTextColor(85,85,80);
+    const lines = doc.splitTextToSize(ctxData.challenge||'', W-2*M-4);
+    doc.text(lines, M, y);
+    y += lines.length * 4 + 6;
+  }
+
+  // Learning preferences
+  if (prefData.style || prefData.formats.length || prefData.frequency) {
+    doc.setFontSize(10); doc.setFont('helvetica','bold'); doc.setTextColor(13,43,94);
+    doc.text('Learning Preferences', M, y); y += 6;
+    doc.setFontSize(8); doc.setFont('helvetica','normal'); doc.setTextColor(85,85,80);
+    if (prefData.style) { doc.text(`Style: ${prefData.style}`, M, y); y += 5; }
+    if (prefData.formats.length) {
+      const fl = doc.splitTextToSize(`Preferred formats: ${prefData.formats.join(' · ')}`, W-2*M);
+      doc.text(fl, M, y); y += fl.length * 4 + 2;
+    }
+    if (prefData.frequency) { doc.text(`Frequency: ${prefData.frequency}`, M, y); y += 6; }
+  }
+
+  // Open expression fields
+  const roleSkill   = document.getElementById('open-role-skill')?.value.trim();
+  const growthSkill = document.getElementById('open-growth-skill')?.value.trim();
+  if (roleSkill || growthSkill) {
+    doc.setFontSize(10); doc.setFont('helvetica','bold'); doc.setTextColor(13,43,94);
+    doc.text('Development Aspirations', M, y); y += 6;
+    doc.setFontSize(8); doc.setFont('helvetica','normal'); doc.setTextColor(85,85,80);
+    if (roleSkill) {
+      doc.text('For current role:', M, y); y += 4;
+      const rl = doc.splitTextToSize(roleSkill, W-2*M-4);
+      doc.text(rl, M+4, y); y += rl.length * 4 + 4;
+    }
+    if (growthSkill) {
+      doc.text('For career growth:', M, y); y += 4;
+      const gl = doc.splitTextToSize(growthSkill, W-2*M-4);
+      doc.text(gl, M+4, y); y += gl.length * 4 + 4;
+    }
+  }
+
+  // Faculty interest (MM/GBM only)
+  if (facultyData.interested === true && facultyData.top3.length) {
+    doc.setFontSize(10); doc.setFont('helvetica','bold'); doc.setTextColor(196,146,42);
+    doc.text('Faculty Interest — Top 3 Areas', M, y); y += 6;
+    doc.setFontSize(8); doc.setFont('helvetica','normal'); doc.setTextColor(85,85,80);
+    doc.text(facultyData.top3.join(' · '), M, y); y += 8;
+  }
+
+  // Footer
+  doc.setFillColor(13,43,94);
+  doc.rect(0,282,W,15,'F');
+  doc.setTextColor(255,255,255); doc.setFont('helvetica','normal'); doc.setFontSize(8);
+  doc.text('Cipla Marketing Academy · TNA 2025 · Confidential', W/2, 291, {align:'center'});
+  doc.text('This report is for personal development planning only', W/2, 295, {align:'center'});
+
+  doc.save(`TNA_${u.ecode}_${u.full_name.replace(/\s+/g,'_')}.pdf`);
+}
+
+// ═══════════════════════════════════════════════
+// TAB SWITCHING
+// ═══════════════════════════════════════════════
+function switchTab(tab) {
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.t-tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('page-'+tab).classList.add('active');
+  document.getElementById('tab-'+tab).classList.add('active');
+}
+</script>
+</body>
+</html>
