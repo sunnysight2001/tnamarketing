@@ -315,6 +315,55 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);fon
 .open-desc{font-size:12px;color:var(--muted);margin-bottom:8px}
 .char-count{font-size:11px;color:var(--muted);text-align:right;margin-top:4px}
 
+/* ── SCENARIO QUESTIONS ── */
+.scenario-block{background:white;border:1px solid var(--border);border-radius:var(--rl);overflow:hidden;margin-bottom:20px}
+.scenario-header{padding:14px 20px;display:flex;align-items:flex-start;gap:12px}
+.scenario-badge{
+  background:var(--navy);color:white;font-size:10px;font-weight:500;
+  padding:3px 10px;border-radius:10px;white-space:nowrap;margin-top:2px;flex-shrink:0;
+}
+.scenario-title{font-size:15px;font-weight:500;color:var(--navy);line-height:1.3}
+.scenario-subdim{font-size:11px;font-weight:500;color:var(--teal);margin-top:2px}
+.scenario-situation{
+  margin:0 22px 16px;padding:14px 16px;
+  background:#F4F2EE;border-left:3px solid var(--teal);border-radius:0 8px 8px 0;
+  font-size:13px;color:var(--text);line-height:1.7;font-style:italic;
+}
+.scenario-q{margin:0 22px 10px;font-size:14px;font-weight:500;color:var(--text)}
+.scenario-opts{margin:0 22px;display:flex;flex-direction:column;gap:8px}
+.scenario-opt{
+  display:flex;align-items:flex-start;gap:12px;padding:12px 16px;
+  border:1.5px solid var(--border);border-radius:10px;cursor:pointer;
+  background:white;transition:all 0.15s;
+}
+.scenario-opt:hover{border-color:var(--teal);background:#F0FAFA}
+.scenario-opt.sel{border-color:var(--navy);background:#EEF4FB}
+.scenario-opt-badge{
+  width:28px;height:28px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:11px;font-weight:600;flex-shrink:0;margin-top:1px;
+  background:var(--border);color:var(--muted);transition:all 0.15s;
+}
+.scenario-opt.sel .scenario-opt-badge{background:var(--navy);color:white}
+.opt-L .scenario-opt-badge{background:#F1EFE8;color:#5F5E5A}
+.opt-Ap .scenario-opt-badge{background:#EAF3DE;color:#3B6D11}
+.opt-Ad .scenario-opt-badge{background:#E6F1FB;color:#185FA5}
+.opt-Ex .scenario-opt-badge{background:#FBEAF0;color:#993556}
+.scenario-opt.sel.opt-L .scenario-opt-badge{background:#5F5E5A;color:white}
+.scenario-opt.sel.opt-Ap .scenario-opt-badge{background:#3B6D11;color:white}
+.scenario-opt.sel.opt-Ad .scenario-opt-badge{background:#185FA5;color:white}
+.scenario-opt.sel.opt-Ex .scenario-opt-badge{background:#993556;color:white}
+.opt-text{font-size:13px;color:var(--text);line-height:1.55;flex:1}
+.opt-score-label{font-size:10px;font-weight:600;letter-spacing:0.3px}
+.scenario-followup{margin:14px 22px 18px;padding:12px 14px;background:#F9F8F6;border-radius:8px}
+.scenario-followup-q{font-size:12px;font-weight:500;color:var(--navy);margin-bottom:6px}
+.scenario-followup textarea{
+  width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:8px;
+  font-family:'DM Sans',sans-serif;font-size:12px;resize:vertical;min-height:64px;
+  color:var(--text);background:white;
+}
+.scenario-followup textarea:focus{outline:none;border-color:var(--teal)}
+
 @media(max-width:600px){
   .container{padding:20px 14px}
   .hero-banner{padding:24px 18px}
@@ -791,67 +840,78 @@ function getApplicableComps(role) {
   return Object.entries(COMPS).filter(([,c]) => c.roles.includes(role));
 }
 
+// ═══════════════════════════════════════════════
+// SCENARIO DATA
+// ═══════════════════════════════════════════════
+const SCENARIOS = {
+  BPM_S1:{pillar:'BPM',subdim:'pm1',subdimLabel:'Product & Therapy Knowledge',roles:['BM_SBM','GBL','GBM','MM_SMM'],title:'The doctor challenge',situation:`A senior pulmonologist you've been calling on for 6 months challenges you in a CME: "Your competitor's molecule has a better safety profile in COPD patients with cardiac comorbidities — why should I prescribe yours?" Three other doctors in the room are listening.`,question:'How do you respond in that moment?',options:[{score:1,level:'L',text:'I would acknowledge the question but struggle to give a confident, data-backed clinical response without my materials.'},{score:2,level:'Ap',text:'I can defend our product profile from memory and handle the safety comparison, though I might miss some nuances.'},{score:3,level:'Ad',text:'I can go deep on the science — comorbidity profiles, head-to-head data, patient segmentation — and turn the challenge into a credible clinical conversation.'},{score:4,level:'Ex',text:'I handle this fluently and use it to reframe the positioning for the whole room, guiding what the other doctors should consider for their specific patient types.'}],followUp:'What specific clinical or therapy area knowledge would have made you more confident in this situation?'},
+  BPM_S2:{pillar:'BPM',subdim:'pm2',subdimLabel:'Market Research & Data Analytics',roles:['BM_SBM','GBL','GBM','MM_SMM'],title:'The brand review that stumped you',situation:`It's your quarterly brand review. The BU Head puts up an IQVIA slide showing your brand's market share declining 2.3 points despite volume growth. She asks: "What's really happening — is this a pricing issue, a segmentation issue, or are we losing the right doctors?"`,question:'How do you diagnose this from the data you have?',options:[{score:1,level:'L',text:"I can see the numbers but I'd need significant help interpreting what the IQVIA data is actually telling us."},{score:2,level:'Ap',text:'I can walk through the likely causes and cross-reference with some internal data, but my analysis might miss secondary factors.'},{score:3,level:'Ad',text:'I can do a structured diagnosis — value vs volume split, prescriber tier analysis, competitor gains by segment — and present a clear hypothesis with data.'},{score:4,level:'Ex',text:'I can do all of the above and design additional research to validate the hypothesis before the next review cycle.'}],followUp:'What data source, tool, or analytical skill would most improve your ability to answer this kind of question independently?'},
+  BPM_S3:{pillar:'BPM',subdim:'pm3',subdimLabel:'Lifecycle Management & NI Planning',roles:['BM_SBM','GBL','GBM','MM_SMM'],title:'The mature brand dilemma',situation:`One of your key brands is entering mid-life — profitable but losing relevance. Generics are growing, field force is deprioritising it, the therapy area is evolving. Your manager asks you to build a lifecycle strategy for the next 18 months that justifies continued investment.`,question:"Which of these best describes where you'd get stuck?",options:[{score:1,level:'L',text:'I understand what lifecycle management means but would struggle to build the strategic rationale and resource allocation case independently.'},{score:2,level:'Ap',text:'I can build the strategy for this brand but would find it harder to make the tradeoff choices across the broader portfolio.'},{score:3,level:'Ad',text:'I can design the full lifecycle plan — segmentation shift, indication extension options, resource reallocation — and defend it commercially.'},{score:4,level:'Ex',text:"I can do this and also identify NI opportunities that extend the brand's relevance, integrating clinical, regulatory, and commercial inputs."}],followUp:"What's the one thing that would make you more confident building lifecycle and NI strategies independently?"},
+  SM_S1:{pillar:'SM',subdim:'sm1',subdimLabel:'Strategy Development',roles:['GBL','GBM','MM_SMM'],title:'The competitor disruption',situation:`A competitor has just launched a combination therapy in your core area at 15% lower price, backed by a significant KOL campaign. Within 6 weeks your field team is reporting resistance from previously loyal prescribers. Your VP asks for a counter-strategy in 10 days.`,question:'Where in the strategy process would you feel least confident?',options:[{score:1,level:'L',text:"Structuring a strategic response — I'd know the direction but struggle to build a full plan with clear tradeoffs and resource choices."},{score:2,level:'Ap',text:'I can build the strategy but would rely heavily on others for the market sensing and competitive intelligence parts.'},{score:3,level:'Ad',text:'I can independently build a differentiated counter-strategy — segment defence, value narrative shift, resource reallocation — and present it with conviction.'},{score:4,level:'Ex',text:"I've been tracking this competitor and already have a prepared scenario response. I can present multiple options with business impact projections."}],followUp:'In your last strategic planning cycle, what was the moment you felt most out of your depth? What was missing?'},
+  SM_S2:{pillar:'SM',subdim:'sm2',subdimLabel:'Forecast & Scenario Planning',roles:['GBL','GBM','MM_SMM'],title:'The forecast under pressure',situation:`It's Q3 and your brand is tracking 8% below annual target. Finance has asked you to reforecast Q4 with three scenarios: base case, upside, and a recovery case requiring additional budget. Your numbers need to hold up in a leadership review.`,question:'Which part of this would you find hardest?',options:[{score:1,level:'L',text:"Building scenarios that are credible and internally consistent — I understand forecasting in principle but struggle when it's scrutinised at leadership level."},{score:2,level:'Ap',text:"The upside and recovery scenarios — I can build the base case well but find it harder to create compelling, evidence-based stretch scenarios."},{score:3,level:'Ad',text:'None of the above significantly — I can build all three scenarios with market-based assumptions and defend them in the room.'},{score:4,level:'Ex',text:"I'd also proactively model what the scenarios mean for next year's planning and flag the strategic implications before they're asked."}],followUp:"What forecasting skill or framework, if you had it, would have changed the quality of your last annual plan?"},
+  SM_S3:{pillar:'SM',subdim:'sm3',subdimLabel:'Business Acumen',roles:['GBL','GBM','MM_SMM'],title:'The P&L conversation',situation:`You're in a brand planning meeting and the CFO asks: "If we increase marketing spend on Brand X by ₹50L next quarter, what's the realistic incremental return, and how does that compare to deploying the same amount on Brand Y?" Both brands are in your portfolio.`,question:'How confidently can you answer this in the room?',options:[{score:1,level:'L',text:"I'd struggle — I understand the question but don't have enough P&L fluency to model incremental ROI across brands on the spot."},{score:2,level:'Ap',text:"I can give a directional answer but would want to take it offline to build a proper analysis before committing to numbers."},{score:3,level:'Ad',text:"I can answer this with confidence — I track both brands' P&L and can model the incremental scenario from the numbers I carry."},{score:4,level:'Ex',text:"I can answer this and frame it in the context of portfolio profitability strategy — not just this quarter but the 12-month trajectory."}],followUp:"What's your honest assessment of your P&L and financial acumen — and what one thing would most improve it?"},
+  CE_S1:{pillar:'CE',subdim:'ce1',subdimLabel:'Strategic Alignment',roles:['BM_SBM','GBL','GBM','MM_SMM'],title:'The brand plan no one believed',situation:`You've just presented your annual brand plan. Feedback from the field team: "This doesn't feel connected to our ground reality." Your ZSM says the campaign messaging doesn't map to what doctors in Tier 2 towns actually ask about.`,question:'When you reflect on your last brand plan, where was the disconnect most likely?',options:[{score:1,level:'L',text:"My campaign messages were built on brand strategy but I didn't consistently validate them against what field teams were actually hearing from doctors."},{score:2,level:'Ap',text:'I link messages to strategy, but the translation into field-relevant language and format is something I\'m still developing.'},{score:3,level:'Ad',text:'I build communication plans that are strategically grounded and field-validated — I actively involve ZSMs and FLMs in the brief stage.'},{score:4,level:'Ex',text:'I design the full communication architecture — from strategy to segment-specific message to channel execution — and govern it through the cycle.'}],followUp:"What would help you build communication plans that stay aligned from strategy all the way to the field — what's the gap in your current process?"},
+  CE_S2:{pillar:'CE',subdim:'ce2',subdimLabel:'Differentiation',roles:['BM_SBM','GBL','GBM','MM_SMM'],title:'The me-too brand problem',situation:`You're launching a product in a crowded therapy space where Cipla is the 4th entrant. The molecule isn't meaningfully different. Your agency has delivered a campaign that looks like every other brand in the category. Your VP says: "I need differentiation — not features, not claims. A reason to choose us."`,question:"What best describes where you'd get stuck?",options:[{score:1,level:'L',text:"Finding differentiation when the product itself isn't — I know it's about positioning but I struggle to build a compelling story from thin clinical ground."},{score:2,level:'Ap',text:"The patient-centric angle — I can build doctor-focused differentiation but find it harder to weave patient outcomes into a message that resonates with prescribers."},{score:3,level:'Ad',text:"I can work through this — segment the audience, find the unmet need angle, and build a differentiated narrative even with a parity product."},{score:4,level:'Ex',text:"This is where I do my best work — I can guide the agency, brief the medical team, and create a differentiated identity that goes beyond the product."}],followUp:'Describe a communication challenge where you had to create differentiation with limited product support. What worked? What would you do differently?'},
+  CE_S3:{pillar:'CE',subdim:'ce3',subdimLabel:'Channel Management',roles:['BM_SBM','GBL','GBM','MM_SMM'],title:"The digital campaign that didn't work",situation:`You ran a digital campaign — email to doctors, CLM slides, and a webinar series. Six weeks in: email open rate 12%, CLM usage 23%, webinar attendance 31 of 200 invited. Your manager asks why and what you'd do differently.`,question:'What would be your honest diagnosis?',options:[{score:1,level:'L',text:"I can see the numbers are low but I'm not confident enough in digital channel mechanics to diagnose root cause and redesign independently."},{score:2,level:'Ap',text:"I can identify the likely issues — content relevance, timing, field adoption gaps — but designing a fully optimised multichannel plan is still developing for me."},{score:3,level:'Ad',text:'I can do a proper channel audit, identify where each touchpoint broke down, and rebuild the campaign with better channel-content fit.'},{score:4,level:'Ex',text:"I can do all of this and design an omnichannel approach that integrates digital and field touchpoints with sequenced messaging."}],followUp:'What digital or multichannel marketing skill, if stronger, would most improve your campaign effectiveness?'},
+  TM_S1:{pillar:'TM',subdim:'tm1',subdimLabel:'Talent Management',roles:['GBL','GBM','MM_SMM'],title:'The talent you nearly lost',situation:`One of your best Brand Managers has been offered a role by a competitor at 20% higher CTC. She comes to you before accepting. You have no budget to counter financially. The conversation is in 48 hours.`,question:'What best describes your readiness for this conversation?',options:[{score:1,level:'L',text:"I'd want to retain her but I'm not confident I can structure a compelling retention conversation without a financial counter — I'd struggle with what to offer."},{score:2,level:'Ap',text:"I can have the conversation and highlight growth and opportunity, but I'm not sure I know her specific aspirations well enough to make it truly personal."},{score:3,level:'Ad',text:"I've been having regular career conversations with her — I know what motivates her and can present a credible growth path that makes staying genuinely compelling."},{score:4,level:'Ex',text:"This wouldn't be a crisis — I track my team's aspirations proactively and would have already taken action before she got to an offer stage."}],followUp:"Thinking about your team right now — how many would you say you know well enough to have this conversation confidently? What's stopping you from knowing them better?"},
+  TM_S2:{pillar:'TM',subdim:'tm2',subdimLabel:'Talent Development',roles:['GBL','GBM','MM_SMM'],title:'The underperforming team member',situation:`A Brand Manager in your team is consistently "good enough" — never excellent, never failing. Technically sound but lacks initiative and rarely offers ideas. You've noticed she's capable of more. Your skip-level asks: "What's your development plan for her?"`,question:'How equipped are you to answer that with a specific, actionable plan?',options:[{score:1,level:'L',text:"I'd describe her performance accurately but struggle to build a development plan with specific actions, timelines, and stretch assignments."},{score:2,level:'Ap',text:"I can outline development areas but my plan would be more focused on training than on creating the right on-the-job experiences."},{score:3,level:'Ad',text:"I have a development view for each person — I can articulate her specific gaps, what experiences she needs, and how I'm actively creating those opportunities."},{score:4,level:'Ex',text:"I'd present a full IDP — linked to her career aspiration, with 30/60/90 milestones, stretch assignments, and coaching conversations already in progress."}],followUp:'What would help you become more systematic and confident in developing the people on your team?'},
+  TM_S3:{pillar:'TM',subdim:'tm3',subdimLabel:'Performance Review & Feedback',roles:['GBL','GBM','MM_SMM'],title:'The feedback conversation you avoided',situation:`A Brand Manager missed a key campaign deadline for the third time this quarter. Each time there was a reason — agency delays, approvals, data gaps. You've acknowledged the explanations. But the pattern is affecting the team. The mid-year review is next week.`,question:'What best describes your likely approach to this review conversation?',options:[{score:1,level:'L',text:"I find it hard to hold this kind of accountability conversation — I'd acknowledge the pattern but probably soften it enough that the message doesn't fully land."},{score:2,level:'Ap',text:"I can have the conversation but would focus more on what happened than on a clear commitment and consequence framework going forward."},{score:3,level:'Ad',text:"I can have a direct, evidence-based conversation that separates the pattern from the excuses, holds accountability, and co-creates a clear improvement plan."},{score:4,level:'Ex',text:"I'd have already had this conversation before the review — the review would be a milestone check, not the first time accountability is being named."}],followUp:"What's the feedback conversation you've been putting off? What's the reason — and what would help you have it?"},
+  AO_S1:{pillar:'AO',subdim:'ao1',subdimLabel:'Drive for Results',roles:['BM_SBM','GBL','GBM','MM_SMM'],title:'The quarter that went wrong',situation:`It's Week 9 of a 13-week quarter. Your brand is 18% behind target. The field team is citing seasonality. Your manager is not convinced. You have 4 weeks to close the gap — or explain why you couldn't.`,question:'What does your response to this situation look like in reality?',options:[{score:1,level:'L',text:"I'd escalate and ask for guidance — I know action is needed but I struggle to independently build and execute a credible recovery plan under time pressure."},{score:2,level:'Ap',text:"I can identify the levers and take action, but my recovery plans tend to be more reactive than structured."},{score:3,level:'Ad',text:"I'd build a structured 4-week recovery plan — segment prioritisation, resource redeployment, field activation, clear KPIs — and own the execution."},{score:4,level:'Ex',text:"I would have seen this coming by Week 5 and already have a mitigation plan in motion. By Week 9 I'm executing the next phase, not starting the plan."}],followUp:'Think about a time you fell short of a target. What did you do — and what would you do differently now?'},
+  AO_S2:{pillar:'AO',subdim:'ao2',subdimLabel:'Influencing for Results',roles:['BM_SBM','GBL','GBM','MM_SMM'],title:'The stakeholder who said no',situation:`You need Medical Affairs to prioritise a KOL engagement program for your brand before the next therapy congress — 6 weeks away. They've pushed back: their calendar is full and your brand isn't in their top 3 priorities this quarter.`,question:'How do you get this done?',options:[{score:1,level:'L',text:"I'd make the case once clearly and then escalate if it doesn't move — I find sustained cross-functional influence difficult when someone has said no."},{score:2,level:'Ap',text:"I can negotiate and build a business case, but I'm not always confident I'm influencing the right people through the right channels."},{score:3,level:'Ad',text:"I'd understand their priorities, find the overlap, restructure the ask to fit their constraints, and get to yes through alignment rather than pressure."},{score:4,level:'Ex',text:"I'd already have the relationship capital built before this moment — I'd know who to call, what matters to them, and how to make this a shared win."}],followUp:"Who is the hardest stakeholder you have to influence right now? What's the barrier — and what have you tried?"},
+  AO_S3:{pillar:'AO',subdim:'ao3',subdimLabel:'Ownership & Resilience',roles:['BM_SBM','GBL','GBM','MM_SMM'],title:'When the plan fell apart',situation:`Your NI launch plan — 8 months in the making — hits a wall 3 weeks before execution. Regulatory clearance is delayed. The KOL program has gone dark. Your agency has delivered unusable creative. Your manager is on leave. The launch window is closing.`,question:'What does your response look like?',options:[{score:1,level:'L',text:"I'd feel overwhelmed and would need significant guidance to reprioritise and rebuild under this kind of compounding pressure."},{score:2,level:'Ap',text:"I'd hold it together and take action, but I might spend too much time trying to salvage the original plan rather than quickly pivoting."},{score:3,level:'Ad',text:"I'd triage quickly — what's recoverable, what isn't, what's the minimum viable launch — and move forward with a revised plan without waiting for my manager."},{score:4,level:'Ex',text:"I'd have contingency plans already sketched for the most likely failure points. When this happens, I shift to contingency mode and keep the team focused and calm."}],followUp:'Describe a moment where multiple things went wrong at once. How did you hold up — and what did it reveal about where you need to build more resilience?'}
+};
+
+const PILLAR_SCENARIOS = {BPM:['BPM_S1','BPM_S2','BPM_S3'],SM:['SM_S1','SM_S2','SM_S3'],CE:['CE_S1','CE_S2','CE_S3'],TM:['TM_S1','TM_S2','TM_S3'],AO:['AO_S1','AO_S2','AO_S3']};
+const PILLAR_ROLES_MAP = {BPM:['BM_SBM','GBL','GBM','MM_SMM'],SM:['GBL','GBM','MM_SMM'],CE:['BM_SBM','GBL','GBM','MM_SMM'],TM:['GBL','GBM','MM_SMM'],AO:['BM_SBM','GBL','GBM','MM_SMM']};
+const PILLAR_META = {BPM:{name:'Brand & Portfolio Management',color:'#0D2B5E'},SM:{name:'Strategic Marketing',color:'#0F6E56'},CE:{name:'Communication Excellence',color:'#534AB7'},TM:{name:'Talent Mindset',color:'#854F0B'},AO:{name:'Achievement Orientation',color:'#993C1D'}};
+let scenarioResponses = {};
+
 function buildQuestionnaire() {
   const role = currentUser.role;
-  const applicable = getApplicableComps(role);
-  const totalQ = applicable.reduce((n,[,c])=>n+c.subdims.length,0);
+  const applicablePillars = Object.entries(PILLAR_ROLES_MAP).filter(([,roles])=>roles.includes(role)).map(([k])=>k);
+  const totalQ = applicablePillars.length * 3;
   document.getElementById('q-count').textContent = totalQ;
-
   let html = '';
   let qNum = 1;
-  applicable.forEach(([key, comp]) => {
-    html += `<div style="margin-bottom:20px">
-      <div class="comp-header">
-        <div class="comp-dot"></div>
-        <div class="comp-name">${comp.name}</div>
-        <div class="comp-tag">${comp.subdims.length} dimensions</div>
-      </div>`;
-    comp.subdims.forEach(sd => {
-      const bench = BENCHMARKS[role][sd.code];
-      const benchText = bench
-        ? `Your benchmark → Threshold: <strong>${['','Learning','Applying','Advanced','Expert'][bench[0]]}</strong> · Desired: <strong>${['','Learning','Applying','Advanced','Expert'][bench[1]]}</strong>`
-        : 'Not applicable for your role';
-      html += `
-      <div class="q-item" id="qi-${sd.code}">
-        <div class="q-meta">Q${qNum} · ${sd.code.toUpperCase()}</div>
-        <div class="q-subdim">${sd.name}</div>
-        <div class="q-text">Where do you honestly operate today on <strong>${sd.name}</strong>?</div>
-        <div class="prof-bar" data-code="${sd.code}">
-          <div class="prof-opt prof-L" onclick="selectScore('${sd.code}',1,this)">
-            <div class="pl">L</div><div class="ps">Learning</div>
-          </div>
-          <div class="prof-opt prof-Ap" onclick="selectScore('${sd.code}',2,this)">
-            <div class="pl">Ap</div><div class="ps">Applying</div>
-          </div>
-          <div class="prof-opt prof-Ad" onclick="selectScore('${sd.code}',3,this)">
-            <div class="pl">Ad</div><div class="ps">Advanced</div>
-          </div>
-          <div class="prof-opt prof-Ex" onclick="selectScore('${sd.code}',4,this)">
-            <div class="pl">Ex</div><div class="ps">Expert</div>
+  applicablePillars.forEach(pillarKey => {
+    const meta = PILLAR_META[pillarKey];
+    const scenarioKeys = PILLAR_SCENARIOS[pillarKey];
+    html += `<div style="margin-bottom:28px"><div class="comp-header" style="background:${meta.color}"><div class="comp-dot"></div><div class="comp-name">${meta.name}</div><div class="comp-tag">3 scenarios</div></div>`;
+    scenarioKeys.forEach(sk => {
+      const s = SCENARIOS[sk];
+      html += `<div class="scenario-block" id="sc-${sk}">
+        <div class="scenario-header">
+          <div>
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
+              <span class="scenario-badge">Q${qNum}</span>
+              <span class="scenario-subdim">${s.subdimLabel}</span>
+            </div>
+            <div class="scenario-title">${s.title}</div>
           </div>
         </div>
-        <div class="anchor-box">
-          <span class="al">L:</span> ${sd.anchors.L} &nbsp;|&nbsp;
-          <span class="al">Ap:</span> ${sd.anchors.Ap} &nbsp;|&nbsp;
-          <span class="al">Ad:</span> ${sd.anchors.Ad} &nbsp;|&nbsp;
-          <span class="al">Ex:</span> ${sd.anchors.Ex}
+        <div class="scenario-situation">${s.situation}</div>
+        <div class="scenario-q">${s.question}</div>
+        <div class="scenario-opts" id="opts-${sk}">
+          ${s.options.map(o=>`<div class="scenario-opt opt-${o.level}" onclick="selectScenarioScore('${sk}',${o.score},'${o.level}',this)"><div class="scenario-opt-badge"><span class="opt-score-label">${o.level}</span></div><div class="opt-text">${o.text}</div></div>`).join('')}
         </div>
-        <div style="margin-top:8px;font-size:11px;color:var(--muted)">${benchText}</div>
+        <div class="scenario-followup">
+          <div class="scenario-followup-q">${s.followUp}</div>
+          <textarea placeholder="Share your thoughts here — be as specific as you can..." id="fu-${sk}" oninput="scenarioResponses['${sk}']=this.value"></textarea>
+        </div>
       </div>`;
       qNum++;
     });
     html += '</div>';
   });
-
   document.getElementById('questionnaire-body').innerHTML = html;
   updateProgress();
 }
 
-function selectScore(code, val, el) {
-  const bar = el.closest('.prof-bar');
-  bar.querySelectorAll('.prof-opt').forEach(o=>o.classList.remove('sel'));
+function selectScenarioScore(scenarioKey, score, level, el) {
+  const opts = document.getElementById('opts-'+scenarioKey);
+  opts.querySelectorAll('.scenario-opt').forEach(o=>o.classList.remove('sel'));
   el.classList.add('sel');
-  scores[code] = val;
+  scores[SCENARIOS[scenarioKey].subdim] = score;
   updateProgress();
 }
 
@@ -865,12 +925,13 @@ function selMCQ(el, type) {
 
 function updateProgress() {
   const role = currentUser.role;
-  const applicable = getApplicableComps(role);
-  const totalQ = applicable.reduce((n,[,c])=>n+c.subdims.length,0);
-  const answered = Object.keys(scores).length;
+  const applicablePillars = Object.entries(PILLAR_ROLES_MAP).filter(([,roles])=>roles.includes(role)).map(([k])=>k);
+  const totalQ = applicablePillars.length * 3;
+  const allSubdims = applicablePillars.flatMap(p=>PILLAR_SCENARIOS[p].map(sk=>SCENARIOS[sk].subdim));
+  const answered = allSubdims.filter(c=>scores[c]!=null).length;
   const pct = Math.round(answered/totalQ*100);
   document.getElementById('prog-fill').style.width = pct+'%';
-  document.getElementById('prog-label').textContent = `${pct}% complete — ${answered} of ${totalQ} questions answered`;
+  document.getElementById('prog-label').textContent = `${pct}% complete — ${answered} of ${totalQ} scenarios answered`;
   document.getElementById('answered-count').textContent = answered;
 }
 
@@ -1043,16 +1104,20 @@ function computeScores() {
 // SUBMIT
 // ═══════════════════════════════════════════════
 async function submitAssessment() {
-  // Validate
+  // Validate all scenarios answered
   const role = currentUser.role;
-  const applicable = getApplicableComps(role);
-  const allCodes = applicable.flatMap(([,c])=>c.subdims.map(s=>s.code));
-  const unanswered = allCodes.filter(c=>!scores[c]);
+  const applicablePillars = Object.entries(PILLAR_ROLES_MAP).filter(([,roles])=>roles.includes(role)).map(([k])=>k);
+  const allSubdims = applicablePillars.flatMap(p=>PILLAR_SCENARIOS[p].map(sk=>SCENARIOS[sk].subdim));
+  const unanswered = allSubdims.filter(c=>!scores[c]);
   if (unanswered.length > 0) {
     const warn = document.getElementById('submit-warning');
     warn.style.display = 'block';
-    warn.textContent = `Please answer all ${unanswered.length} remaining question(s) before submitting.`;
-    document.getElementById('qi-'+unanswered[0])?.scrollIntoView({behavior:'smooth',block:'center'});
+    warn.textContent = `Please answer all ${unanswered.length} remaining scenario(s) before submitting.`;
+    // Scroll to first unanswered scenario
+    const firstUnansweredKey = applicablePillars
+      .flatMap(p=>PILLAR_SCENARIOS[p])
+      .find(sk=>!scores[SCENARIOS[sk].subdim]);
+    if(firstUnansweredKey) document.getElementById('sc-'+firstUnansweredKey)?.scrollIntoView({behavior:'smooth',block:'center'});
     return;
   }
 
@@ -1094,6 +1159,8 @@ async function submitAssessment() {
       // Open fields
       skill_for_role:   skillForRole||null,
       skill_for_growth: skillForGrowth||null,
+      // Scenario open-text responses
+      scenario_responses: Object.keys(scenarioResponses).length ? scenarioResponses : null,
       // Scores
       bpm_avg: computed.bpm_avg||null,
       sm_avg:  computed.sm_avg||null,
