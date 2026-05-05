@@ -892,7 +892,7 @@ function buildQuestionnaire() {
         <div class="scenario-situation">${s.situation}</div>
         <div class="scenario-q">${s.question}</div>
         <div class="scenario-opts" id="opts-${sk}">
-          ${s.options.map(o=>`<div class="scenario-opt opt-${o.level}" onclick="selectScenarioScore('${sk}',${o.score},'${o.level}',this)"><div class="scenario-opt-badge"><span class="opt-score-label">${o.level}</span></div><div class="opt-text">${o.text}</div></div>`).join('')}
+          ${s.options.map(o=>`<div class="scenario-opt opt-${o.level}" onclick="selectScenarioScore('${sk}',${o.score},'${o.level}',this)"><div class="scenario-opt-badge"></div><div class="opt-text">${o.text}</div></div>`).join('')}
         </div>
         <div class="scenario-followup">
           <div class="scenario-followup-q">${s.followUp}</div>
@@ -1369,9 +1369,8 @@ function buildRepQs(rep) {
           ${levels.map(lv => `
           <div class="mgr-opt ${lv.cls}" onclick="selectMgrScore('${rep.ecode}','${s.subdim}',${lv.val},this)"
             style="display:flex;align-items:flex-start;gap:10px;padding:9px 12px;border:1.5px solid var(--border);border-radius:8px;cursor:pointer;background:white;transition:all 0.15s">
-            <div style="min-width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;flex-shrink:0;background:${lv.cls==='prof-L'?'#F1EFE8':lv.cls==='prof-Ap'?'#EAF3DE':lv.cls==='prof-Ad'?'#E6F1FB':'#FBEAF0'};color:${lv.cls==='prof-L'?'#5F5E5A':lv.cls==='prof-Ap'?'#3B6D11':lv.cls==='prof-Ad'?'#185FA5':'#993556'}">${lv.label.slice(0,2)}</div>
+            <div style="min-width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;background:${lv.cls==='prof-L'?'#F1EFE8':lv.cls==='prof-Ap'?'#EAF3DE':lv.cls==='prof-Ad'?'#E6F1FB':'#FBEAF0'}"></div>
             <div style="flex:1">
-              <div style="font-size:12px;font-weight:500;color:var(--text);margin-bottom:2px">${lv.label}</div>
               <div style="font-size:11px;color:var(--muted);line-height:1.5">${desc[lv.key]}</div>
             </div>
           </div>`).join('')}
