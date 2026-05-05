@@ -1321,34 +1321,80 @@ async function buildTeamTab() {
   }
 }
 
+// ── MANAGER TAB PROFICIENCY DESCRIPTORS ──
+const MGR_DESCRIPTORS = {
+  pm1:{L:"Needs support to answer clinical questions in the field.",Ap:"Handles standard doctor queries confidently using product knowledge.",Ad:"Goes deep on science — comorbidities, comparators, patient segments.",Ex:"Shapes clinical conversations and coaches the team on therapy nuances."},
+  pm2:{L:"Reads IQVIA numbers but struggles to draw a diagnosis from them.",Ap:"Can identify likely causes with some support from data inputs.",Ad:"Independently structures market analysis and presents a clear hypothesis.",Ex:"Designs research to validate findings; drives data culture in the team."},
+  pm3:{L:"Understands lifecycle stages but can't yet build a strategy independently.",Ap:"Can develop a lifecycle plan for one brand with some guidance.",Ad:"Makes resource tradeoff decisions across brands with commercial clarity.",Ex:"Identifies NI opportunities and integrates clinical, regulatory, and commercial view."},
+  sm1:{L:"Knows the direction but struggles to build a structured strategic plan.",Ap:"Builds strategy but relies on others for competitive and market inputs.",Ad:"Independently crafts differentiated plans with clear tradeoffs and resources.",Ex:"Anticipates competitive moves; presents multiple scenarios with impact projections."},
+  sm2:{L:"Builds a base case but struggles with credible stretch scenarios.",Ap:"Forecasts reasonably well; upside scenarios need more rigour.",Ad:"Builds all three scenario types with market-based assumptions confidently.",Ex:"Proactively models implications for the next planning cycle without being asked."},
+  sm3:{L:"Understands P&L in principle but can't model ROI decisions on the spot.",Ap:"Gives directional answers; needs time offline to build rigorous analysis.",Ad:"Tracks brand P&L and models incremental scenarios in the room.",Ex:"Frames decisions in portfolio profitability context across a 12-month view."},
+  ce1:{L:"Campaign messages are strategy-led but not field-validated.",Ap:"Links strategy to messaging; translation into field language is developing.",Ad:"Actively involves ZSMs and FLMs to ground-truth communication briefs.",Ex:"Governs the full communication architecture from strategy to field execution."},
+  ce2:{L:"Struggles to differentiate when the product has limited clinical ground.",Ap:"Builds doctor-focused differentiation; patient-centric angle still developing.",Ad:"Creates differentiated narratives even with parity products.",Ex:"Guides agency and medical team to build a brand identity beyond the product."},
+  ce3:{L:"Sees low metrics but can't independently diagnose or redesign the channel mix.",Ap:"Identifies likely channel issues; multichannel planning still developing.",Ad:"Audits channel performance and rebuilds with better content-channel fit.",Ex:"Designs integrated omnichannel approach with sequenced field and digital messaging."},
+  tm1:{L:"Retention conversations are reactive; limited knowledge of team aspirations.",Ap:"Has career conversations but not consistently personalised to each individual.",Ad:"Knows what motivates each team member; proactively builds growth paths.",Ex:"Acts before talent reaches an offer stage; bench strength is always in progress."},
+  tm2:{L:"Describes performance accurately but IDPs are vague or training-focused.",Ap:"Identifies development areas but relies more on programs than on-job experiences.",Ad:"Has a specific development view per person with active stretch assignments.",Ex:"Runs full IDPs with 30/60/90 milestones linked to each person's career aspiration."},
+  tm3:{L:"Acknowledges patterns but softens feedback enough that the message doesn't land.",Ap:"Has the conversation but focuses on events rather than accountability forward.",Ad:"Separates pattern from excuses; co-creates a clear improvement plan with evidence.",Ex:"Accountability conversation happens before the review — review is a milestone check."},
+  ao1:{L:"Escalates when behind target; recovery plans need significant guidance.",Ap:"Takes action but plans are more reactive than structured under pressure.",Ad:"Builds a structured recovery plan with segment priorities and KPIs; owns it.",Ex:"Spots the gap by Week 5; mitigation is already in motion before it's a crisis."},
+  ao2:{L:"Makes the case once; finds sustained cross-functional influence difficult.",Ap:"Builds a business case but isn't always sure of the right influence levers.",Ad:"Restructures the ask to fit stakeholder constraints; gets to yes through alignment.",Ex:"Has relationship capital built before the ask — knows exactly who to call and why."},
+  ao3:{L:"Feels overwhelmed when multiple things go wrong simultaneously.",Ap:"Holds together but spends too long trying to salvage the original plan.",Ad:"Triages quickly — identifies what's recoverable and moves forward without waiting.",Ex:"Runs contingency mode calmly; team stays focused because of how they show up."}
+};
+
 function buildRepQs(rep) {
   const role = rep.role;
-  const applicable = getApplicableComps(role);
+  const applicablePillars = Object.entries(PILLAR_ROLES_MAP).filter(([,roles])=>roles.includes(role)).map(([k])=>k);
   let html = '<div style="padding:16px 22px 0">';
-  applicable.forEach(([key, comp]) => {
-    html += `<div style="margin-bottom:16px">
-      <div style="font-size:12px;font-weight:500;color:var(--navy);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px">${comp.name}</div>`;
-    comp.subdims.forEach(sd => {
-      html += `<div style="margin-bottom:10px">
-        <div style="font-size:13px;color:var(--text);margin-bottom:6px">${sd.name}</div>
-        <div class="prof-bar" data-ratee="${rep.ecode}" data-code="${sd.code}">
-          <div class="prof-opt prof-L" onclick="selectMgrScore('${rep.ecode}','${sd.code}',1,this)"><div class="pl">L</div><div class="ps">Learning</div></div>
-          <div class="prof-opt prof-Ap" onclick="selectMgrScore('${rep.ecode}','${sd.code}',2,this)"><div class="pl">Ap</div><div class="ps">Applying</div></div>
-          <div class="prof-opt prof-Ad" onclick="selectMgrScore('${rep.ecode}','${sd.code}',3,this)"><div class="pl">Ad</div><div class="ps">Advanced</div></div>
-          <div class="prof-opt prof-Ex" onclick="selectMgrScore('${rep.ecode}','${sd.code}',4,this)"><div class="pl">Ex</div><div class="ps">Expert</div></div>
+
+  applicablePillars.forEach(pillarKey => {
+    const meta = PILLAR_META[pillarKey];
+    const scenarioKeys = PILLAR_SCENARIOS[pillarKey];
+
+    html += `<div style="margin-bottom:20px">
+      <div style="font-size:11px;font-weight:500;color:white;background:${meta.color};text-transform:uppercase;letter-spacing:0.5px;padding:6px 12px;border-radius:6px;margin-bottom:10px;display:inline-block">${meta.name}</div>`;
+
+    scenarioKeys.forEach(sk => {
+      const s = SCENARIOS[sk];
+      const desc = MGR_DESCRIPTORS[s.subdim];
+      const levels = [
+        {val:1, key:'L',  label:'Learning', cls:'prof-L'},
+        {val:2, key:'Ap', label:'Applying', cls:'prof-Ap'},
+        {val:3, key:'Ad', label:'Advanced', cls:'prof-Ad'},
+        {val:4, key:'Ex', label:'Expert',   cls:'prof-Ex'},
+      ];
+
+      html += `<div style="margin-bottom:16px;padding:12px 14px;border:1px solid var(--border);border-radius:10px;background:#FAFAF8">
+        <div style="font-size:13px;font-weight:500;color:var(--navy);margin-bottom:4px">${s.subdimLabel}</div>
+        <div style="font-size:11px;color:var(--muted);margin-bottom:10px;font-style:italic">${s.situation.slice(0,90)}...</div>
+        <div style="display:flex;flex-direction:column;gap:6px" data-ratee="${rep.ecode}" data-code="${s.subdim}">
+          ${levels.map(lv => `
+          <div class="mgr-opt ${lv.cls}" onclick="selectMgrScore('${rep.ecode}','${s.subdim}',${lv.val},this)"
+            style="display:flex;align-items:flex-start;gap:10px;padding:9px 12px;border:1.5px solid var(--border);border-radius:8px;cursor:pointer;background:white;transition:all 0.15s">
+            <div style="min-width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;flex-shrink:0;background:${lv.cls==='prof-L'?'#F1EFE8':lv.cls==='prof-Ap'?'#EAF3DE':lv.cls==='prof-Ad'?'#E6F1FB':'#FBEAF0'};color:${lv.cls==='prof-L'?'#5F5E5A':lv.cls==='prof-Ap'?'#3B6D11':lv.cls==='prof-Ad'?'#185FA5':'#993556'}">${lv.label.slice(0,2)}</div>
+            <div style="flex:1">
+              <div style="font-size:12px;font-weight:500;color:var(--text);margin-bottom:2px">${lv.label}</div>
+              <div style="font-size:11px;color:var(--muted);line-height:1.5">${desc[lv.key]}</div>
+            </div>
+          </div>`).join('')}
         </div>
       </div>`;
     });
     html += '</div>';
   });
+
   html += '</div>';
   return html;
 }
 
 function selectMgrScore(rateeEcode, code, val, el) {
-  const bar = el.closest('.prof-bar');
-  bar.querySelectorAll('.prof-opt').forEach(o=>o.classList.remove('sel'));
-  el.classList.add('sel');
+  // Find the parent container and deselect siblings
+  const container = el.closest('[data-ratee]') || el.parentNode;
+  container.querySelectorAll('.mgr-opt').forEach(o => {
+    o.style.borderColor = 'var(--border)';
+    o.style.background = 'white';
+  });
+  // Highlight selected
+  el.style.borderColor = 'var(--navy)';
+  el.style.background = '#EEF4FB';
   if (!mgScores[rateeEcode]) mgScores[rateeEcode] = {};
   mgScores[rateeEcode][code] = val;
 }
@@ -1363,8 +1409,8 @@ function toggleReportee(ecode) {
 
 async function submitManagerRating(rateeEcode, rateeRole) {
   const s = mgScores[rateeEcode] || {};
-  const applicable = getApplicableComps(rateeRole);
-  const allCodes = applicable.flatMap(([,c])=>c.subdims.map(sd=>sd.code));
+  const applicablePillars = Object.entries(PILLAR_ROLES_MAP).filter(([,roles])=>roles.includes(rateeRole)).map(([k])=>k);
+  const allCodes = applicablePillars.flatMap(p=>PILLAR_SCENARIOS[p].map(sk=>SCENARIOS[sk].subdim));
   const missing = allCodes.filter(c=>!s[c]);
   if (missing.length > 0) {
     alert(`Please rate all ${missing.length} competency dimension(s) before saving.`);
