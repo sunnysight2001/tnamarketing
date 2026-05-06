@@ -246,6 +246,14 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);fon
 .alert-warn{background:#FAEEDA;border:1px solid #FAC775;color:#633806}
 .alert-error{background:#FCEBEB;border:1px solid #F7C1C1;color:#791F1F}
 
+/* ── DRAFT / SAVE ── */
+.draft-banner{background:#E6F1FB;border:1px solid #9FC5F0;border-radius:var(--r);padding:12px 18px;margin-bottom:20px;display:flex;align-items:center;gap:12px;font-size:13px;color:#0C447C}
+.draft-banner-icon{font-size:18px;flex-shrink:0}
+.save-btn{padding:10px 20px;background:var(--teal);color:white;border:none;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;cursor:pointer;transition:all 0.2s;display:inline-flex;align-items:center;gap:6px}
+.save-btn:hover{background:#005560}
+.save-btn:disabled{background:var(--muted);cursor:not-allowed}
+.save-status{font-size:12px;color:var(--muted);margin-top:6px;text-align:center;min-height:18px}
+
 .spinner{display:inline-block;width:16px;height:16px;border:2px solid rgba(255,255,255,0.3);border-top-color:white;border-radius:50%;animation:spin 0.7s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
 
@@ -427,6 +435,11 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);fon
     </div>
 
     <div class="container">
+      <div id="draft-banner" style="display:none" class="draft-banner">
+        <div class="draft-banner-icon">💾</div>
+        <div><strong>Draft restored.</strong> We've loaded your previously saved responses — carry on from where you left off.</div>
+      </div>
+
       <div class="progress-label" id="prog-label">0% complete</div>
       <div class="progress-wrap"><div class="progress-fill" id="prog-fill" style="width:0%"></div></div>
 
@@ -582,13 +595,16 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);fon
           </div>
         </div>
       </div>
+      <div class="submit-area">
         <h3>Ready to submit?</h3>
         <p>Your scores will be saved securely. You can download your personal PDF report immediately after submitting.</p>
         <div class="alert alert-warn" id="submit-warning" style="display:none"></div>
         <div class="btn-row">
-          <button class="btn-outline" onclick="downloadPDF(false)">Preview PDF first</button>
+          <button class="save-btn" id="save-draft-btn" onclick="saveDraft()">💾 Save Progress</button>
+          <button class="btn-outline" onclick="downloadPDF(false)">Preview PDF</button>
           <button class="btn-primary" id="submit-btn" onclick="submitAssessment()">Submit & Get My Report →</button>
         </div>
+        <div class="save-status" id="save-status"></div>
       </div>
     </div>
   </div>
@@ -742,6 +758,7 @@ let scores = {};      // {pm1:2, ce1:3, ...}
 let mgScores = {};    // {ecode: {pm1:2,...}}
 let ctxData = {challenge:'',impact:'',time:''};
 let submittedResult = null;
+let currentDraft = null;  // holds draft SA row if exists
 
 // ═══════════════════════════════════════════════
 // LOGIN
@@ -764,14 +781,20 @@ async function doLogin() {
     }
     currentUser = rows[0];
 
-    // Check if already submitted
+    // Check for existing submission or draft
     const existing = await sbFetch(`self_assessments?ecode=eq.${ecode}&order=attempt.desc&limit=1`);
     if (existing && existing.length > 0) {
       const sa = existing[0];
-      if (confirm(`You have already submitted this TNA (Attempt ${sa.attempt}). Click OK to view your results, or Cancel to re-take.`)) {
-        submittedResult = buildResultFromDB(sa);
-        showResultScreen();
-        return;
+      if (sa.status === 'complete') {
+        if (confirm(`You have already submitted this TNA (Attempt ${sa.attempt}). Click OK to view your results, or Cancel to re-take.`)) {
+          submittedResult = buildResultFromDB(sa);
+          showResultScreen();
+          btn.innerHTML = 'Continue →'; btn.disabled = false;
+          return;
+        }
+      } else {
+        // Draft exists — restore it
+        currentDraft = sa;
       }
     }
 
@@ -800,7 +823,8 @@ function showError(msg) {
 }
 
 function doLogout() {
-  currentUser = null; scores = {}; mgScores = {}; submittedResult = null;
+  currentUser = null; scores = {}; mgScores = {}; submittedResult = null; currentDraft = null;
+  prefData = {style:'',formats:[],frequency:''}; facultyData = {interested:null,top3:[]}; scenarioResponses = {};
   document.getElementById('login-screen').style.display = 'flex';
   document.getElementById('app').style.display = 'none';
   document.getElementById('result-screen').style.display = 'none';
@@ -825,6 +849,11 @@ function initApp() {
 
   buildQuestionnaire();
   showFacultyIfApplicable();
+
+  // Restore draft if exists
+  if (currentDraft) {
+    restoreDraft(currentDraft);
+  }
 
   // Show team tab for managers
   if (u.is_manager) {
@@ -1056,6 +1085,78 @@ function showFacultyIfApplicable() {
 // LEARNING PREFERENCE JS — END
 // ═══════════════════════════════════════════════
 
+// ═══════════════════════════════════════════════
+// DRAFT SAVE & RESTORE
+// ═══════════════════════════════════════════════
+function restoreDraft(sa) {
+  const allCodes = ['pm1','pm2','pm3','pm4','sm1','sm2','sm3','ce1','ce2','ce3','tm1','tm2','tm3','ao1','ao2','ao3'];
+  allCodes.forEach(code => {
+    const val = sa[code+'_score'];
+    if (!val) return;
+    scores[code] = val;
+    const sk = Object.keys(SCENARIOS).find(k => SCENARIOS[k].subdim === code);
+    if (!sk) return;
+    const opts = document.getElementById('opts-'+sk);
+    if (!opts) return;
+    const optEls = opts.querySelectorAll('.scenario-opt');
+    if (optEls[val-1]) optEls[val-1].classList.add('sel');
+  });
+  if (sa.business_challenge) document.getElementById('ctx-challenge').value = sa.business_challenge;
+  if (sa.time_available) { document.querySelectorAll('#ctx-time-opts .mcq-opt').forEach(el => { if(el.textContent.trim()===sa.time_available){el.classList.add('sel');ctxData.time=sa.time_available;} }); }
+  if (sa.impact_area) { document.querySelectorAll('#ctx-impact-opts .mcq-opt').forEach(el => { if(el.textContent.trim()===sa.impact_area){el.classList.add('sel');ctxData.impact=sa.impact_area;} }); }
+  if (sa.learning_style) { document.querySelectorAll('#style-chips .chip').forEach(el => { if(el.textContent.trim()===sa.learning_style){el.classList.add('sel');prefData.style=sa.learning_style;} }); }
+  if (sa.preferred_formats) { const fmts=sa.preferred_formats.split(', '); document.querySelectorAll('#format-chips .chip').forEach(el => { if(fmts.includes(el.textContent.trim())){el.classList.add('sel');} }); prefData.formats=fmts; }
+  if (sa.preferred_frequency) { document.querySelectorAll('#freq-chips .chip').forEach(el => { if(el.textContent.trim()===sa.preferred_frequency){el.classList.add('sel');prefData.frequency=sa.preferred_frequency;} }); }
+  if (sa.skill_for_role) { document.getElementById('open-role-skill').value=sa.skill_for_role; updateChar('open-role-skill','char-role'); }
+  if (sa.skill_for_growth) { document.getElementById('open-growth-skill').value=sa.skill_for_growth; updateChar('open-growth-skill','char-growth'); }
+  if (sa.scenario_responses) { Object.entries(sa.scenario_responses).forEach(([sk,txt]) => { const ta=document.getElementById('fu-'+sk); if(ta){ta.value=txt;scenarioResponses[sk]=txt;} }); }
+  document.getElementById('draft-banner').style.display = 'flex';
+  updateProgress();
+}
+
+async function saveDraft() {
+  const btn = document.getElementById('save-draft-btn');
+  const statusEl = document.getElementById('save-status');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span> Saving...';
+  try {
+    ctxData.challenge = document.getElementById('ctx-challenge')?.value.trim()||'';
+    const skillForRole   = document.getElementById('open-role-skill')?.value.trim()||'';
+    const skillForGrowth = document.getElementById('open-growth-skill')?.value.trim()||'';
+    const payload = {
+      ecode: currentUser.ecode, attempt: 1, status: 'draft',
+      pm1_score:scores.pm1||null, pm2_score:scores.pm2||null, pm3_score:scores.pm3||null, pm4_score:scores.pm4||null,
+      sm1_score:scores.sm1||null, sm2_score:scores.sm2||null, sm3_score:scores.sm3||null,
+      ce1_score:scores.ce1||null, ce2_score:scores.ce2||null, ce3_score:scores.ce3||null,
+      tm1_score:scores.tm1||null, tm2_score:scores.tm2||null, tm3_score:scores.tm3||null,
+      ao1_score:scores.ao1||null, ao2_score:scores.ao2||null, ao3_score:scores.ao3||null,
+      business_challenge:ctxData.challenge||null, impact_area:ctxData.impact||null, time_available:ctxData.time||null,
+      learning_style:prefData.style||null,
+      preferred_formats:prefData.formats.length?prefData.formats.join(', '):null,
+      preferred_frequency:prefData.frequency||null,
+      faculty_interest:facultyData.interested===true,
+      faculty_top3:facultyData.top3.length?facultyData.top3.join(', '):null,
+      skill_for_role:skillForRole||null, skill_for_growth:skillForGrowth||null,
+      scenario_responses:Object.keys(scenarioResponses).length?scenarioResponses:null,
+    };
+    if (currentDraft) {
+      await sbFetch(`self_assessments?ecode=eq.${currentUser.ecode}&attempt=eq.1&status=eq.draft`, {method:'PATCH', body:JSON.stringify(payload), prefer:'return=minimal'});
+    } else {
+      await sbFetch('self_assessments', {method:'POST', body:JSON.stringify(payload), prefer:'return=minimal'});
+      currentDraft = payload;
+    }
+    btn.innerHTML = '💾 Save Progress'; btn.disabled = false;
+    const now = new Date().toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'});
+    statusEl.style.color = 'var(--sage)';
+    statusEl.textContent = `✓ Progress saved at ${now}`;
+    setTimeout(()=>{ statusEl.textContent=''; },4000);
+  } catch(e) {
+    btn.innerHTML = '💾 Save Progress'; btn.disabled = false;
+    statusEl.style.color = '#A32D2D';
+    statusEl.textContent = 'Save failed — please try again';
+  }
+}
+
 function computeScores() {
   const role = currentUser.role;
   const bench = BENCHMARKS[role];
@@ -1129,17 +1230,20 @@ async function submitAssessment() {
     ctxData.challenge = document.getElementById('ctx-challenge').value.trim();
     const computed = computeScores();
 
-    // Collect new fields
     const skillForRole   = document.getElementById('open-role-skill')?.value.trim()||'';
     const skillForGrowth = document.getElementById('open-growth-skill')?.value.trim()||'';
 
-    // Get next attempt number
-    const existing = await sbFetch(`self_assessments?ecode=eq.${currentUser.ecode}&select=attempt&order=attempt.desc&limit=1`);
-    const nextAttempt = existing && existing.length > 0 ? existing[0].attempt + 1 : 1;
+    // If draft exists, upgrade it; otherwise get next attempt number
+    let nextAttempt = 1;
+    if (!currentDraft) {
+      const existing = await sbFetch(`self_assessments?ecode=eq.${currentUser.ecode}&select=attempt&status=eq.complete&order=attempt.desc&limit=1`);
+      nextAttempt = existing && existing.length > 0 ? existing[0].attempt + 1 : 1;
+    }
 
     const payload = {
       ecode: currentUser.ecode,
       attempt: nextAttempt,
+      status: 'complete',
       pm1_score: scores.pm1||null, pm2_score: scores.pm2||null,
       pm3_score: scores.pm3||null, pm4_score: scores.pm4||null,
       sm1_score: scores.sm1||null, sm2_score: scores.sm2||null, sm3_score: scores.sm3||null,
@@ -1149,19 +1253,14 @@ async function submitAssessment() {
       business_challenge: ctxData.challenge,
       impact_area: ctxData.impact,
       time_available: ctxData.time,
-      // Learning preferences
       learning_style:      prefData.style||null,
       preferred_formats:   prefData.formats.length ? prefData.formats.join(', ') : null,
       preferred_frequency: prefData.frequency||null,
-      // Faculty interest
       faculty_interest: facultyData.interested === true,
       faculty_top3:     facultyData.top3.length ? facultyData.top3.join(', ') : null,
-      // Open fields
       skill_for_role:   skillForRole||null,
       skill_for_growth: skillForGrowth||null,
-      // Scenario open-text responses
       scenario_responses: Object.keys(scenarioResponses).length ? scenarioResponses : null,
-      // Scores
       bpm_avg: computed.bpm_avg||null,
       sm_avg:  computed.sm_avg||null,
       ce_avg:  computed.ce_avg||null,
@@ -1171,11 +1270,20 @@ async function submitAssessment() {
       pathway_assigned: computed.pathway_assigned
     };
 
-    await sbFetch('self_assessments', {
-      method: 'POST',
-      body: JSON.stringify(payload),
-      prefer: 'return=minimal'
-    });
+    if (currentDraft) {
+      // Upgrade draft to complete
+      await sbFetch(`self_assessments?ecode=eq.${currentUser.ecode}&attempt=eq.1&status=eq.draft`, {
+        method: 'PATCH',
+        body: JSON.stringify(payload),
+        prefer: 'return=minimal'
+      });
+    } else {
+      await sbFetch('self_assessments', {
+        method: 'POST',
+        body: JSON.stringify(payload),
+        prefer: 'return=minimal'
+      });
+    }
 
     // Audit log
     sbFetch('audit_log', {
@@ -1304,10 +1412,14 @@ async function buildTeamTab() {
           <div style="padding:16px 22px">
             <label style="display:block;font-size:13px;font-weight:500;color:var(--text);margin-bottom:6px">Additional notes (optional)</label>
             <textarea class="ctx-textarea" id="notes-${rep.ecode}" placeholder="Any development observations for this team member..."></textarea>
-            <div style="margin-top:12px;display:flex;gap:10px">
-              <button class="btn-primary" onclick="submitManagerRating('${rep.ecode}','${rep.role}')">
-                Save Rating for ${rep.full_name.split(' ')[0]}
+            <div style="margin-top:12px;display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+              <button class="save-btn" onclick="saveMgrDraft('${rep.ecode}','${rep.role}',this)">
+                💾 Save Draft
               </button>
+              <button class="btn-primary" onclick="submitManagerRating('${rep.ecode}','${rep.role}')">
+                ✓ Save Final Rating for ${rep.full_name.split(' ')[0]}
+              </button>
+              <span class="save-status" id="mgr-save-status-${rep.ecode}" style="margin-top:0"></span>
             </div>
           </div>
         </div>
@@ -1406,6 +1518,42 @@ function toggleReportee(ecode) {
   chev.textContent = isOpen ? '▼' : '▲';
 }
 
+async function saveMgrDraft(rateeEcode, rateeRole, btn) {
+  const s = mgScores[rateeEcode] || {};
+  const calcAvg = (codes) => { const vals=codes.map(c=>s[c]).filter(v=>v!=null); return vals.length?+(vals.reduce((a,b)=>a+b,0)/vals.length).toFixed(2):null; };
+  const statusEl = document.getElementById('mgr-save-status-'+rateeEcode);
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span>';
+  const payload = {
+    manager_ecode:currentUser.ecode, ratee_ecode:rateeEcode, attempt:1, status:'draft',
+    pm1_score:s.pm1||null, pm2_score:s.pm2||null, pm3_score:s.pm3||null, pm4_score:s.pm4||null,
+    sm1_score:s.sm1||null, sm2_score:s.sm2||null, sm3_score:s.sm3||null,
+    ce1_score:s.ce1||null, ce2_score:s.ce2||null, ce3_score:s.ce3||null,
+    tm1_score:s.tm1||null, tm2_score:s.tm2||null, tm3_score:s.tm3||null,
+    ao1_score:s.ao1||null, ao2_score:s.ao2||null, ao3_score:s.ao3||null,
+    bpm_avg:calcAvg(['pm1','pm2','pm3','pm4']), sm_avg:calcAvg(['sm1','sm2','sm3']),
+    ce_avg:calcAvg(['ce1','ce2','ce3']), tm_avg:calcAvg(['tm1','tm2','tm3']), ao_avg:calcAvg(['ao1','ao2','ao3']),
+    manager_notes:document.getElementById('notes-'+rateeEcode)?.value.trim()||''
+  };
+  try {
+    // Check if draft already exists for this pair
+    const existing = await sbFetch(`manager_assessments?manager_ecode=eq.${currentUser.ecode}&ratee_ecode=eq.${rateeEcode}&status=eq.draft&limit=1`);
+    if (existing && existing.length > 0) {
+      await sbFetch(`manager_assessments?manager_ecode=eq.${currentUser.ecode}&ratee_ecode=eq.${rateeEcode}&status=eq.draft`, {method:'PATCH', body:JSON.stringify(payload), prefer:'return=minimal'});
+    } else {
+      await sbFetch('manager_assessments', {method:'POST', body:JSON.stringify(payload), prefer:'return=minimal'});
+    }
+    btn.innerHTML = '💾 Save Draft'; btn.disabled = false;
+    if (statusEl) { statusEl.style.color='var(--sage)'; statusEl.textContent=`✓ Draft saved`; setTimeout(()=>{statusEl.textContent='';},3000); }
+    // Update header badge to show In Progress
+    const badge = document.querySelector(`#rc-${rateeEcode} .reportee-status`);
+    if (badge && badge.textContent==='Pending') { badge.textContent='In Progress'; badge.style.background='#FAEEDA'; badge.style.color='#633806'; }
+  } catch(e) {
+    btn.innerHTML = '💾 Save Draft'; btn.disabled = false;
+    if (statusEl) { statusEl.style.color='#A32D2D'; statusEl.textContent='Save failed'; }
+  }
+}
+
 async function submitManagerRating(rateeEcode, rateeRole) {
   const s = mgScores[rateeEcode] || {};
   const applicablePillars = Object.entries(PILLAR_ROLES_MAP).filter(([,roles])=>roles.includes(rateeRole)).map(([k])=>k);
@@ -1416,7 +1564,6 @@ async function submitManagerRating(rateeEcode, rateeRole) {
     return;
   }
 
-  // Compute manager pillar avgs
   const calcAvg = (codes) => {
     const vals = codes.map(c=>s[c]).filter(v=>v!=null);
     return vals.length ? +(vals.reduce((a,b)=>a+b,0)/vals.length).toFixed(2) : null;
@@ -1426,6 +1573,7 @@ async function submitManagerRating(rateeEcode, rateeRole) {
     manager_ecode: currentUser.ecode,
     ratee_ecode: rateeEcode,
     attempt: 1,
+    status: 'complete',
     pm1_score:s.pm1||null, pm2_score:s.pm2||null, pm3_score:s.pm3||null, pm4_score:s.pm4||null,
     sm1_score:s.sm1||null, sm2_score:s.sm2||null, sm3_score:s.sm3||null,
     ce1_score:s.ce1||null, ce2_score:s.ce2||null, ce3_score:s.ce3||null,
@@ -1440,14 +1588,18 @@ async function submitManagerRating(rateeEcode, rateeRole) {
   };
 
   try {
-    await sbFetch('manager_assessments', {
-      method:'POST', body:JSON.stringify(payload), prefer:'return=minimal'
-    });
-    // Update status badge
+    // Check if draft exists to upgrade, else insert fresh
+    const existing = await sbFetch(`manager_assessments?manager_ecode=eq.${currentUser.ecode}&ratee_ecode=eq.${rateeEcode}&status=eq.draft&limit=1`);
+    if (existing && existing.length > 0) {
+      await sbFetch(`manager_assessments?manager_ecode=eq.${currentUser.ecode}&ratee_ecode=eq.${rateeEcode}&status=eq.draft`, {method:'PATCH', body:JSON.stringify(payload), prefer:'return=minimal'});
+    } else {
+      await sbFetch('manager_assessments', {method:'POST', body:JSON.stringify(payload), prefer:'return=minimal'});
+    }
     const statusEl = document.querySelector(`#rc-${rateeEcode} .reportee-status`);
     if (statusEl) { statusEl.textContent='Rated'; statusEl.className='reportee-status status-done'; }
     toggleReportee(rateeEcode);
-    alert('Rating saved successfully.');
+    const statusMsg = document.getElementById('mgr-save-status-'+rateeEcode);
+    if (statusMsg) { statusMsg.style.color='var(--sage)'; statusMsg.textContent='✓ Final rating saved'; }
   } catch(e) {
     alert('Failed to save rating: '+e.message);
   }
